@@ -4,16 +4,6 @@ export type User = {
 	email: string;
 	password: string;
 };
-export type Recipe = {
-	id: string;
-	title: string;
-	image: string;
-	ingredients: string[];
-	steps: string[];
-	user_id: string;
-	date: Date;
-	edit_date: Date;
-};
 
 export type LinkStructure = {
 	name?: string;

@@ -11,7 +11,7 @@ export const authConfig = {
 			const isOnSignInPage = nextUrl.pathname.startsWith("/account");
 
 			const loginIsRequired =
-				nextUrl.pathname.startsWith("/recipes") ||
+				/*nextUrl.pathname.startsWith("/recipes") ||*/
 				nextUrl.pathname.includes("edit");
 			if (loginIsRequired) {
 				if (isLoggedIn) return true;

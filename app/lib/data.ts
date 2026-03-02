@@ -1,5 +1,5 @@
 import postgres, { RowList } from "postgres";
-import { User, Recipe } from "./definitions";
+import { User} from "./definitions";
 import { getCurrentUserId } from "@/auth";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
@@ -50,58 +50,5 @@ export async function fetchUsers() {
 	} catch (err) {
 		console.error("Database Error:", err);
 		throw new Error("Failed to fetch all users.");
-	}
-}
-
-export async function fetchRecipeById(id: string) {
-	try {
-		const recipes = await sql<Recipe[]>`
-            SELECT
-            *
-            FROM recipes
-			WHERE id = ${id}
-            ORDER BY title ASC
-        `;
-
-		return recipes[0];
-	} catch (err) {
-		console.error("Database Error:", err);
-		throw new Error("Failed to fetch user's recipes.");
-	}
-}
-export async function fetchRecipesByUser(userId: string) {
-	try {
-		const recipes = await sql<Recipe[]>`
-            SELECT
-            *
-            FROM recipes
-			WHERE user_id = ${userId}
-            ORDER BY title ASC
-        `;
-
-		return recipes;
-	} catch (err) {
-		console.error("Database Error:", err);
-		throw new Error("Failed to fetch user's recipes.");
-	}
-}
-
-export async function fetchRecipesPages(query: string, itemsPerPage: number) {
-	const userId = (await getCurrentUserId()) ?? "Failed To Fetch UserID";
-	try {
-		const recipes = await sql<Recipe[]>`
-			SELECT *
-    		FROM recipes
-    		WHERE
-      			(title ILIKE ${`%${query}%`} OR
-      			date::text ILIKE ${`%${query}%`})
-	  			AND user_id = ${userId}
-			ORDER BY edit_date DESC;
-  		`;
-
-		return recipes;
-	} catch (error) {
-		console.error("Database Error:", error);
-		throw new Error("Failed to fetch recipes from search.");
 	}
 }

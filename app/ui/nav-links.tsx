@@ -12,10 +12,6 @@ const links: LinkStructure[] = [
 		name: "Home",
 		href: "/",
 	},
-	{
-		name: "Recipes",
-		href: "/recipes",
-	},
 ];
 
 export default function NavLinks() {
