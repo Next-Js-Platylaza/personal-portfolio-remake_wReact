@@ -10,6 +10,12 @@ export type LinkStructure = {
 	href: string;
 };
 
+export type ProjectStructure = {
+	linkAddress: string;
+	title: string;
+	description: string;
+};
+
 export type InputAttributes = {
 	id: string;
 	label: string;
