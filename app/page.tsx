@@ -5,12 +5,17 @@ import { Metadata } from "next";
 import ProjectsCarousel from "@/app/ui/projects-carousel";
 import Link from "next/link";
 import StyleClasses from "@/app/lib/style-classes";
+import { fetchArticles, fetchCommentsByArticle } from "@/app/lib/data";
 export const metadata: Metadata = {
 	title: "Logan Blank's Portfolio Page",
 };
 
 export default async function Home() {
 	const userId = await getCurrentUserId();
+	const articles = await fetchArticles();
+	const comments = await fetchCommentsByArticle(1);
+	console.log(comments[0].id);
+
 	return (
 		<div className='h-full font-["Open_Sans",_serif] font-[450] not-italic [font-variation-settings:"wdth"_100] bg-[#dddddd]'>
 			<Navbar>{<></>}</Navbar>
@@ -90,12 +95,25 @@ export default async function Home() {
 								- My Articles -
 							</h1>
 							<div
-								id="projects"
+								id="articles"
 								className="flex w-[85%] h-60 border-2 border-gray-400 bg-[#eaeaea] p-3 py-[8pt] rounded-[12px] mx-auto"
-							></div>
+							>
+								{articles.map((art) => {
+									const key: string = `li-${art.title}`;
+									return (
+										<li key={key}>
+											<h1>
+												{art.id} - {art.title}
+											</h1>
+											<p>{art.text}</p>
+										</li>
+									);
+								})}
+							</div>
 						</div>
 						<br />
-						<hr className="py-5 w-[75%] m-auto" />
+						<br />
+						<hr className="py-5 w-[60%] m-auto" />
 						<h1 className='font-["Playfair_Display",_serif] font-bold not-italic text-2xl text-center mb-5'>
 							- Contact Me -
 						</h1>

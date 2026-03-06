@@ -5,6 +5,18 @@ export type User = {
 	password: string;
 };
 
+export type Article = {
+	id: string;
+	title: string;
+	text: string;
+};
+export type Comment = {
+	id: string;
+	article_id: string;
+	user_id: string;
+	text: string;
+};
+
 export type LinkStructure = {
 	name?: string;
 	href: string;
