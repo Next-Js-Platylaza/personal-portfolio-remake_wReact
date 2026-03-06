@@ -5,7 +5,6 @@ import { ProjectStructure } from "../lib/definitions";
 import StyleClasses from "../lib/style-classes";
 import Project from "./project";
 
-// Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
 const projects: ProjectStructure[] = [
 	{
@@ -41,7 +40,7 @@ const projects: ProjectStructure[] = [
 ];
 
 export default function ProjectsCarousel() {
-	const [value, setValue] = useState(1);
+	const [value, setValue] = useState(2);
 
 	function onClick(forward: boolean) {
 		if (forward) {
@@ -54,30 +53,25 @@ export default function ProjectsCarousel() {
 	function getProjectsToDisplay() {
 		let idToSet = 0;
 		let ids: number[] = [];
-		console.log("Value = " + value);
 
-		if (value == 1) {
-			ids[idToSet] = projects.length - 1;
+		function addProject(value: number) {
+			ids[idToSet] = value;
 			idToSet++;
 		}
+
+		if (value == 1) addProject(projects.length);
+
 		for (let i = 1; i <= projects.length; i++)
-			if (i >= value - 1 || i <= value + 1) {
-				ids[idToSet] = i;
-				idToSet++;
-				console.log(i);
+			if (i >= value - 1 && i <= value + 1) {
+				addProject(i);
 			}
 
-		if (value == projects.length) {
-			ids[idToSet] = 1;
-			idToSet++;
-		}
+		if (value == projects.length) addProject(1);
 
-		let carouselIndex = 0;
 		let projectsToReturn: ProjectStructure[] = [];
-		ids.forEach((id) => {
-			projectsToReturn[carouselIndex] = projects[id - 1];
-			carouselIndex++;
-		});
+		for (let i = 0; i < ids.length; i++)
+			projectsToReturn[i] = projects[ids[i] - 1];
+
 		return projectsToReturn;
 	}
 
@@ -96,8 +90,6 @@ export default function ProjectsCarousel() {
 			</button>
 			<ul className="flex w-[70%] min-w-[700px] m-auto">
 				{getProjectsToDisplay().map((proj) => {
-					if (proj.id < value - 1 || proj.id > value + 1) return;
-
 					const key: string = `li-${proj.title}`;
 					return (
 						<li key={key} className="m-auto">

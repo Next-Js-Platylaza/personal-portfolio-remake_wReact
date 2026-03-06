@@ -18,7 +18,7 @@ export default async function Home() {
 				<main className="flex flex-col gap-[16px] row-start-2 items-center">
 					<div>
 						<header>
-							<h1 className='font-["Playfair_Display",_serif] font-bold not-italic text-3xl text-center my-1'>
+							<h1 className='font-["Playfair_Display",_serif] font-bold not-italic text-3xl text-center w-[1200px] my-1'>
 								- Logan Blank's Portfolio -
 							</h1>
 						</header>
@@ -75,47 +75,78 @@ export default async function Home() {
 									Photoshop.
 								</p>
 							</div>
-							<hr className="py-3 w-[65%] m-auto" />
+							<br />
+							<hr className="py-4 w-[60%] m-auto" />
 							<h1 className='font-["Playfair_Display",_serif] font-bold not-italic text-2xl text-center mb-5'>
 								- My Projects -
 							</h1>
 
 							<ProjectsCarousel />
 
-							<form
-								id="contact"
-								className="flex-[auto] bg-red-200"
-							>
-								<label htmlFor="first-name">First Name</label>
+							<br />
+							<br />
+							<hr className="py-5 w-[75%] m-auto" />
+							<h1 className='font-["Playfair_Display",_serif] font-bold not-italic text-2xl text-center mb-5'>
+								- My Articles -
+							</h1>
+							<div
+								id="projects"
+								className="flex w-[85%] h-60 border-2 border-gray-400 bg-[#eaeaea] p-3 py-[8pt] rounded-[12px] mx-auto"
+							></div>
+						</div>
+						<br />
+						<hr className="py-5 w-[75%] m-auto" />
+						<h1 className='font-["Playfair_Display",_serif] font-bold not-italic text-2xl text-center mb-5'>
+							- Contact Me -
+						</h1>
+						<form
+							id="contact"
+							className="flex flex-col mx-auto my-8 p-5 rounded-[25px]  border-3 border-gray-500 bg-gray-300 w-190"
+						>
+							<section className="flex">
+								<label htmlFor="first-name">First Name:</label>
 								<input
 									id="first-name"
 									type="text"
-									className={StyleClasses.inputFormClass}
+									placeholder="John"
+									className={
+										StyleClasses.inputFormClass +
+										" mr-[12%]"
+									}
 								/>
 
-								<label htmlFor="last-name">Last Name</label>
-								<input
-									id="last-name"
-									type="text"
-									className={StyleClasses.inputFormClass}
-								/>
-
-								<label htmlFor="email">Email</label>
+								<label htmlFor="email">Email:</label>
 								<input
 									id="email"
 									type="text"
+									placeholder="abc123@mail.com"
 									className={StyleClasses.inputFormClass}
 								/>
-
-								<label htmlFor="message">Message</label>
+							</section>
+							<br />
+							<section className="">
+								<label htmlFor="last-name">Last Name:</label>
+								<input
+									id="last-name"
+									type="text"
+									placeholder="Doe"
+									className={
+										StyleClasses.inputFormClass +
+										" mr-[12%]"
+									}
+								/>
+								<label htmlFor="message">Message:</label>
 								<textarea
 									id="message"
 									placeholder="Type message here"
 									className={StyleClasses.inputFormClass}
 								></textarea>
+							</section>
+							<br />
+							<section className="ml-auto w-90">
 								<select
 									id="message-type"
-									className={StyleClasses.inputFormClass}
+									className={`${StyleClasses.inputFormClass} my-2`}
 								>
 									<option value="business">
 										Business Inquiry
@@ -126,12 +157,13 @@ export default async function Home() {
 									</option>
 								</select>
 
-								<button className={StyleClasses.buttonClass}>
+								<button
+									className={`${StyleClasses.buttonClass} ml-8`}
+								>
 									Contact Me
 								</button>
-							</form>
-						</div>
-
+							</section>
+						</form>
 						<footer>
 							<h4 className="text-[#222233]">
 								&copy; Logan Blank 2026
