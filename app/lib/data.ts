@@ -1,5 +1,5 @@
 import postgres, { RowList } from "postgres";
-import { Article, User } from "./definitions";
+import { Article, User, ArticleComment } from "./definitions";
 import { getCurrentUserId } from "@/auth";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
@@ -53,6 +53,18 @@ export async function fetchUsers() {
 	}
 }
 
+export async function fetchArticle(id: string) {
+	try {
+		const article = await sql<Article[]>`
+			SELECT * FROM articles WHERE id = ${id}
+  		`;
+
+		return article[0];
+	} catch (error) {
+		console.error("Database Error:", error);
+		throw new Error("Failed to fetch articles.");
+	}
+}
 export async function fetchArticles() {
 	try {
 		const articles = await sql<Article[]>`
@@ -68,7 +80,7 @@ export async function fetchArticles() {
 
 export async function fetchCommentsByArticle(id: string | number) {
 	try {
-		const comments = await sql<Comment[]>`
+		const comments = await sql<ArticleComment[]>`
 			SELECT * FROM comments WHERE article_id = ${id}
   		`;
 

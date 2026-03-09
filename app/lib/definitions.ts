@@ -10,7 +10,7 @@ export type Article = {
 	title: string;
 	text: string;
 };
-export type Comment = {
+export type ArticleComment = {
 	id: string;
 	article_id: string;
 	user_id: string;
