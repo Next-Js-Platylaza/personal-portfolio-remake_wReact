@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LinkStructure } from "../lib/definitions";
+import { LinkStructure } from "@/app/lib/definitions";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
 
@@ -11,6 +11,14 @@ const links: LinkStructure[] = [
 	{
 		name: "Home",
 		href: "/",
+	},
+	{
+		name: "Projects",
+		href: "/projects",
+	},
+	{
+		name: "Articles",
+		href: "/articles",
 	},
 ];
 

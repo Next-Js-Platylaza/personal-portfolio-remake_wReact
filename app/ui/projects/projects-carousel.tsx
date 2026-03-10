@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ProjectStructure } from "../lib/definitions";
-import StyleClasses from "../lib/style-classes";
+import { ProjectStructure } from "@/app/lib/definitions";
+import StyleClasses from "@/app/lib/style-classes";
 import Project from "./project";
+import Link from "next/link";
 
 // Depending on the size of the application, this would be stored in a database.
 const projects: ProjectStructure[] = [
@@ -78,34 +79,41 @@ export default function ProjectsCarousel() {
 	return (
 		<div
 			id="projects"
-			className="flex w-[85%] border-2 border-gray-400 bg-[#eaeaea] p-3 py-[8pt] rounded-[12px] mx-auto"
+			className=" w-[85%] h-[260px] border-2 border-gray-400 bg-[#eaeaea] p-3 py-[8pt] rounded-[12px] mx-auto"
 		>
-			<button
-				className={`${StyleClasses.buttonClass} w-16 h-16 font-bold text-5xl -mr-10 m-auto`}
-				onClick={() => {
-					onClick(false);
-				}}
-			>
-				<p className="-ml-2 -mt-1">&larr;</p>
-			</button>
-			<ul className="flex w-[70%] min-w-[700px] m-auto">
-				{getProjectsToDisplay().map((proj) => {
-					const key: string = `li-${proj.title}`;
-					return (
-						<li key={key} className="m-auto">
-							<Project proj={proj} />
-						</li>
-					);
-				})}
-			</ul>
-			<button
-				className={`${StyleClasses.buttonClass} w-16 h-16 font-bold text-5xl -ml-10 m-auto`}
-				onClick={() => {
-					onClick(true);
-				}}
-			>
-				<p className="-ml-2 -mt-1">&rarr;</p>
-			</button>
+			<div className="flex mt-auto">
+				<button
+					className={`${StyleClasses.buttonClass} w-16 h-16 font-bold text-5xl -mr-10 m-auto`}
+					onClick={() => {
+						onClick(false);
+					}}
+				>
+					<p className="-ml-2 -mt-1">&larr;</p>
+				</button>
+				<ul className="flex w-[70%] min-w-[700px] m-auto">
+					{getProjectsToDisplay().map((proj) => {
+						const key: string = `li-${proj.title}`;
+						return (
+							<li key={key} className="m-auto">
+								<Project proj={proj} />
+							</li>
+						);
+					})}
+				</ul>
+				<button
+					className={`${StyleClasses.buttonClass} w-16 h-16 font-bold text-5xl -ml-10 m-auto`}
+					onClick={() => {
+						onClick(true);
+					}}
+				>
+					<p className="-ml-2 -mt-1">&rarr;</p>
+				</button>
+			</div>
+			<div className="text-center -mt-[0.2rem]">
+				<Link href="/projects" className={StyleClasses.linkClass}>
+					See All
+				</Link>
+			</div>
 		</div>
 	);
 }

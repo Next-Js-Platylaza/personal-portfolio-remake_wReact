@@ -1,7 +1,17 @@
 import Link from "next/link";
-import { fetchArticle, fetchCommentsByArticle, fetchUser } from "../lib/data";
+import {
+	fetchArticle,
+	fetchCommentsByArticle,
+	fetchUser,
+} from "@/app/lib/data";
 
-export default async function Article({ id }: { id: string }) {
+export default async function Article({
+	id,
+	className,
+}: {
+	id: string;
+	className?: string;
+}) {
 	const article = await fetchArticle(id);
 	const comments = await fetchCommentsByArticle(id);
 
@@ -10,9 +20,13 @@ export default async function Article({ id }: { id: string }) {
 		? await fetchUser("id", `${mostRecentComment?.user_id}`)
 		: null;
 
+	const divClass =
+		className ??
+		"flex flex-col max-w-[325px] bg-gray-200 border-3 border-gray-400 rounded-[15px] p-2";
+
 	return (
-		<div className="flex flex-col flex-1 max-w-[325px] bg-gray-200 border-3 border-gray-400 rounded-[15px] p-2 ">
-			<Link href={`/article/${id}`}>
+		<div className={divClass}>
+			<Link href={`/articles/${id}`}>
 				<h1 className="ml-5 text-xl">{`${article.title}`}</h1>
 				<p className="mt-1 ml-2">{article.text}</p>
 			</Link>

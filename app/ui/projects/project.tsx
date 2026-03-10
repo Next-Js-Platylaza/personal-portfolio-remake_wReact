@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ProjectStructure } from "../lib/definitions";
+import { ProjectStructure } from "@/app/lib/definitions";
 import { useState } from "react";
-import StyleClasses from "../lib/style-classes";
 
 export default function Project({ proj }: { proj: ProjectStructure }) {
 	const [isActive, setIsActive] = useState(false);
