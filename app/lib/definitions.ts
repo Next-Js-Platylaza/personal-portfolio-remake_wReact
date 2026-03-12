@@ -22,9 +22,9 @@ export type LinkStructure = {
 	href: string;
 };
 
-export type ProjectStructure = {
-	id: number;
-	linkAddress: string;
+export type Project = {
+	id: string;
+	href: string;
 	title: string;
 	description: string;
 };

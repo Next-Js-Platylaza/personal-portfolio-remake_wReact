@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { fetchArticles } from "@/app/lib/data";
-import Article from "./article";
+import ArticleComponent from "./article";
 import StyleClasses from "@/app/lib/style-classes";
 
 export default async function ArticlesSection() {
@@ -14,7 +14,7 @@ export default async function ArticlesSection() {
 			<div className="flex gap-3 h-63 p-3 py-[8pt] mt-auto">
 				{articles.map((art) => {
 					const key: string = `li-${art.title}`;
-					return <Article key={key} id={art.id} />;
+					return <ArticleComponent key={key} id={art.id} />;
 				})}
 			</div>
 			<div className="-mt-1 h-6 text-center">

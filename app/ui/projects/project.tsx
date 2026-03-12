@@ -1,25 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { ProjectStructure } from "@/app/lib/definitions";
-import { useState } from "react";
+import { Project } from "@/app/lib/definitions";
 
-export default function Project({ proj }: { proj: ProjectStructure }) {
-	const [isActive, setIsActive] = useState(false);
-
-	function onclick() {
-		setIsActive((a) => (a = !a));
-		console.log(isActive);
-	}
-
+export default function ProjectComponent({ proj }: { proj: Project }) {
 	return (
 		<button
-			className="w-50 h-50 text-[#353535] cursor-pointer border-[2px] border-[solid] border-[#00000055] rounded-[18px] m-[0.5rem] bg-[#dedede]"
-			onClick={onclick}
+			className="w-50 h-50 text-[#353535] cursor-pointer border-[2px] border-[solid] border-[#00000055] rounded-[18px] bg-[#dedede]"
 		>
 			<Link
 				key={proj.title}
-				href={proj.linkAddress}
+				href={proj.href}
 				className="flex flex-col items-center "
 			>
 				<h4

@@ -7,12 +7,14 @@ import Link from "next/link";
 import StyleClasses from "@/app/lib/style-classes";
 import ArticlesSection from "@/app/ui/articles/articles-section";
 import Footer from "./ui/footer";
+import { fetchProjects } from "./lib/data";
 export const metadata: Metadata = {
 	title: "Logan Blank's Portfolio Page",
 };
 
 export default async function Home() {
 	const userId = await getCurrentUserId();
+	const projects = await fetchProjects();
 
 	return (
 		<>
@@ -89,7 +91,7 @@ export default async function Home() {
 									- My Projects -
 								</h1>
 
-								<ProjectsCarousel />
+								<ProjectsCarousel projects={projects}/>
 
 								<br />
 								<br />

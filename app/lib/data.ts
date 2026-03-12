@@ -1,5 +1,5 @@
-import postgres, { RowList } from "postgres";
-import { Article, User, ArticleComment } from "./definitions";
+import postgres from "postgres";
+import { Article, User, ArticleComment, Project } from "@/app/lib/definitions";
 import { getCurrentUserId } from "@/auth";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
@@ -88,5 +88,28 @@ export async function fetchCommentsByArticle(id: string | number) {
 	} catch (error) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch comments.");
+	}
+}
+
+export async function fetchProject(id : string | number) {
+	try {
+		const projects = await sql<Project[]>`
+			SELECT * FROM projects WHERE id = ${id}
+  		`;
+		return projects[0];
+	} catch (error) {
+		console.error("Database Error:", error);
+		throw new Error("Failed to fetch projects.");
+	}
+}
+export async function fetchProjects() {
+	try {
+		const projects = await sql<Project[]>`
+			SELECT * FROM projects
+  		`;
+		return projects.sort((a:Project, b:Project) => Number(a.id) - Number(b.id));
+	} catch (error) {
+		console.error("Database Error:", error);
+		throw new Error("Failed to fetch projects.");
 	}
 }

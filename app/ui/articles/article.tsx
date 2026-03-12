@@ -5,7 +5,7 @@ import {
 	fetchUser,
 } from "@/app/lib/data";
 
-export default async function Article({
+export default async function ArticleComponent({
 	id,
 	className,
 }: {

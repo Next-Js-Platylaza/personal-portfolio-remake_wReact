@@ -2,50 +2,16 @@ import Navbar from "@/app/ui/navbar";
 
 import { Metadata } from "next";
 import {
-	fetchArticle,
-	fetchCommentsByArticle,
-	fetchUser,
+	fetchProjects
 } from "@/app/lib/data";
 import Footer from "@/app/ui/footer";
-import Project from "@/app/ui/projects/project";
-import { ProjectStructure } from "@/app/lib/definitions";
+import ProjectComponent from "@/app/ui/projects/project";
+import { Project } from "@/app/lib/definitions";
 export const metadata: Metadata = {
 	title: "Logan Blank's Portfolio Page",
 };
 
-// Move to database
-const projects: ProjectStructure[] = [
-	{
-		id: 1,
-		linkAddress: "#",
-		title: "Project 1",
-		description: "This is the 1st project's description.",
-	},
-	{
-		id: 2,
-		linkAddress: "#",
-		title: "Project 2",
-		description: "This is the 2nd project's description.",
-	},
-	{
-		id: 3,
-		linkAddress: "#",
-		title: "Project 3",
-		description: "This is the 3rd project's description.",
-	},
-	{
-		id: 4,
-		linkAddress: "#",
-		title: "Project 4",
-		description: "This is the 3rd project's description.",
-	},
-	{
-		id: 5,
-		linkAddress: "#",
-		title: "Project 5",
-		description: "This is the 3rd project's description.",
-	},
-];
+const projects: Project[] = await fetchProjects();
 
 export default async function Home() {
 	return (
@@ -57,24 +23,19 @@ export default async function Home() {
 						<main className="w-full h-full row-start-2 ">
 							<div
 								id="projects"
-								className=" w-[85%] h-[260px] border-2 border-gray-400 bg-[#eaeaea] p-3 py-[8pt] rounded-[12px] mx-auto"
+								className="flex flex-wrap w-[85%] min-w-[450px] h-[260px] border-2 border-gray-400 bg-[#eaeaea] p-3 py-[8pt] rounded-[12px] mx-auto min-xl:min-w-[1100px] max-xl:h-[450px] max-md:h-[650px]"
 							>
-								<div className="flex mt-auto">
-									<ul className="flex w-[70%] min-w-[700px] m-auto">
 										{projects.map((proj) => {
 											const key: string = `li-${proj.title}`;
 											return (
-												<li
+												<div
 													key={key}
-													className="m-auto"
+													className="m-auto border-1 border-red-200"
 												>
-													<Project proj={proj} />
-												</li>
+													<ProjectComponent key={key} proj={proj} />
+												</div>
 											);
 										})}
-									</ul>
-								</div>
-								<div className="text-center -mt-[0.2rem]"></div>
 							</div>
 						</main>
 					</div>

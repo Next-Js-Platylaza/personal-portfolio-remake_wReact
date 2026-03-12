@@ -1,47 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { ProjectStructure } from "@/app/lib/definitions";
+import { Project } from "@/app/lib/definitions";
 import StyleClasses from "@/app/lib/style-classes";
-import Project from "./project";
+import ProjectComponent from "./project";
 import Link from "next/link";
 
-// Depending on the size of the application, this would be stored in a database.
-const projects: ProjectStructure[] = [
-	{
-		id: 1,
-		linkAddress: "#",
-		title: "Project 1",
-		description: "This is the 1st project's description.",
-	},
-	{
-		id: 2,
-		linkAddress: "#",
-		title: "Project 2",
-		description: "This is the 2nd project's description.",
-	},
-	{
-		id: 3,
-		linkAddress: "#",
-		title: "Project 3",
-		description: "This is the 3rd project's description.",
-	},
-	{
-		id: 4,
-		linkAddress: "#",
-		title: "Project 4",
-		description: "This is the 3rd project's description.",
-	},
-	{
-		id: 5,
-		linkAddress: "#",
-		title: "Project 5",
-		description: "This is the 3rd project's description.",
-	},
-];
-
-export default function ProjectsCarousel() {
+export default function ProjectsCarousel({projects} : {projects : Project[]}) {
 	const [value, setValue] = useState(2);
+
+	console.log(projects);
 
 	function onClick(forward: boolean) {
 		if (forward) {
@@ -69,10 +37,11 @@ export default function ProjectsCarousel() {
 
 		if (value == projects.length) addProject(1);
 
-		let projectsToReturn: ProjectStructure[] = [];
+		let projectsToReturn: Project[] = [];
 		for (let i = 0; i < ids.length; i++)
 			projectsToReturn[i] = projects[ids[i] - 1];
 
+		console.log(projectsToReturn);
 		return projectsToReturn;
 	}
 
@@ -95,7 +64,7 @@ export default function ProjectsCarousel() {
 						const key: string = `li-${proj.title}`;
 						return (
 							<li key={key} className="m-auto">
-								<Project proj={proj} />
+								<ProjectComponent proj={proj} />
 							</li>
 						);
 					})}
