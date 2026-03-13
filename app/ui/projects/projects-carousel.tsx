@@ -1,15 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Project } from "@/app/lib/definitions";
 import StyleClasses from "@/app/lib/style-classes";
 import ProjectComponent from "./project";
 import Link from "next/link";
+import { useWindowWidth } from "../useWindowWidth";
 
-export default function ProjectsCarousel({projects} : {projects : Project[]}) {
+export default function ProjectsCarousel({
+	projects,
+}: {
+	projects: Project[];
+}) {
 	const [value, setValue] = useState(2);
+	//const mainDivRef: Ref<HTMLDivElement> | null = useRef(null);
 
-	console.log(projects);
+	const width = useWindowWidth();
+
+	useEffect(() => {
+		console.log(width);
+	}, [width]);
 
 	function onClick(forward: boolean) {
 		if (forward) {
@@ -48,7 +58,7 @@ export default function ProjectsCarousel({projects} : {projects : Project[]}) {
 	return (
 		<div
 			id="projects"
-			className=" w-[85%] h-[260px] border-2 border-gray-400 bg-[#eaeaea] p-3 py-[8pt] rounded-[12px] mx-auto"
+			className="w-[25%] min-w-[280px] h-[250px] border-2 border-gray-400 bg-[#eaeaea] p-3 py-[8pt] rounded-[12px] mx-auto lg:bg-red-200"
 		>
 			<div className="flex mt-auto">
 				<button
@@ -78,7 +88,7 @@ export default function ProjectsCarousel({projects} : {projects : Project[]}) {
 					<p className="-ml-2 -mt-1">&rarr;</p>
 				</button>
 			</div>
-			<div className="text-center -mt-[0.2rem]">
+			<div className="text-center mt-[0.3rem]">
 				<Link href="/projects" className={StyleClasses.linkClass}>
 					See All
 				</Link>
