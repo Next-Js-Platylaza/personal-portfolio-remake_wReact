@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Ref, useRef, useEffect, useState } from "react";
 import { Project } from "@/app/lib/definitions";
 import StyleClasses from "@/app/lib/style-classes";
 import ProjectComponent from "./project";
@@ -13,13 +13,13 @@ export default function ProjectsCarousel({
 	projects: Project[];
 }) {
 	const [value, setValue] = useState(2);
-	//const mainDivRef: Ref<HTMLDivElement> | null = useRef(null);
+	const mainDivRef: Ref<HTMLDivElement> | null = useRef(null);
 
-	const width = useWindowWidth();
+	const windowWidth = useWindowWidth();
 
 	useEffect(() => {
-		console.log(width);
-	}, [width]);
+		console.log(windowWidth);
+	}, [windowWidth]);
 
 	function onClick(forward: boolean) {
 		if (forward) {
@@ -57,8 +57,9 @@ export default function ProjectsCarousel({
 
 	return (
 		<div
+			ref={mainDivRef}
 			id="projects"
-			className="w-[25%] min-w-[280px] h-[250px] border-2 border-gray-400 bg-[#eaeaea] p-3 py-[8pt] rounded-[12px] mx-auto lg:bg-red-200"
+			className="w-[85%] min-w-[280px] h-[250px] border-2 border-gray-400 bg-[#eaeaea] p-3 py-[8pt] rounded-[12px] mx-auto lg:bg-red-200"
 		>
 			<div className="flex mt-auto">
 				<button
