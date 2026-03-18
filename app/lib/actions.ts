@@ -1,4 +1,4 @@
-"use server";
+import { WeatherData } from "./definitions";
 import { getCurrentUserId, signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { z } from "zod";
@@ -136,4 +136,30 @@ export async function createUser(
 	// Revalidate the cache and redirect the user. If auto-login worked
 	revalidatePath(url);
 	redirect(url);
+}
+
+// NWS API
+export async function getWeatherData() {
+	// Use coordinates for specific location
+	const res = await fetch("https://api.weather.gov/points/41.725, -111.85", {
+		headers: {
+			"User-Agent": process.env.NWS_USER_AGENT || "default-agent",
+		},
+	});
+
+	if (!res.ok) return null;
+	const data = await res.json();
+
+	// NWS often requires a second call to get the actual forecast
+	const forecastRes = await fetch(data.properties.forecast, {
+		headers: {
+			"User-Agent": process.env.NWS_USER_AGENT || "default-agent",
+		},
+	});
+	const json = await forecastRes.json();
+	const period = json.properties.periods[0];
+	return {
+		temp: `${period.temperature}°${period.temperatureUnit}`,
+		word: period.shortForecast,
+	} as WeatherData;
 }

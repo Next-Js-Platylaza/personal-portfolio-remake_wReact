@@ -43,3 +43,8 @@ export type InputAttributes = {
 	inputStyles?: string;
 	removeButtonStyles?: string;
 };
+
+export type WeatherData = {
+	temp: string;
+	word: string;
+};
