@@ -1,4 +1,4 @@
-import { WeatherData } from "./definitions";
+import { LocationCoords, LocationState, WeatherData } from "./definitions";
 import { getCurrentUserId, signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { z } from "zod";
@@ -139,11 +139,11 @@ export async function createUser(
 }
 
 // NWS API
-export async function getWeatherData() {
+export async function getWeatherData(coords: string = "41.725, -111.85") {
 	// Use coordinates for specific location
-	const res = await fetch("https://api.weather.gov/points/41.725, -111.85", {
+	const res = await fetch("https://api.weather.gov/points/" + coords, {
 		headers: {
-			"User-Agent": process.env.NWS_USER_AGENT || "default-agent",
+			"User-Agent": "default-agent",
 		},
 	});
 
@@ -153,7 +153,7 @@ export async function getWeatherData() {
 	// NWS often requires a second call to get the actual forecast
 	const forecastRes = await fetch(data.properties.forecast, {
 		headers: {
-			"User-Agent": process.env.NWS_USER_AGENT || "default-agent",
+			"User-Agent": "default-agent",
 		},
 	});
 	const json = await forecastRes.json();

@@ -48,3 +48,19 @@ export type WeatherData = {
 	temp: string;
 	word: string;
 };
+
+export type LocationCoords = {
+	latitude: number | null;
+	longitude: number | null;
+	accuracy: number | null;
+	altitude: number | null;
+	altitudeAccuracy: number | null;
+	heading: number | null;
+	speed: number | null;
+};
+
+export type LocationState = {
+	loading: boolean;
+	coords: LocationCoords | null;
+	error: GeolocationPositionError | null;
+};

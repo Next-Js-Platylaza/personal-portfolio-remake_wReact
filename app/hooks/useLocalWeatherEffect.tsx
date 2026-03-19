@@ -1,14 +1,18 @@
 "use client";
 import { useRef, useEffect } from "react";
 import { WeatherData } from "../lib/definitions";
+import useGeolocation from "./useGeoLocation";
 
 // NWS API
 export function useLocalWeather() {
 	const weatherData = useRef({} as WeatherData);
 
+	const geoLocation = useGeolocation().coords;
+	const coords = `${geoLocation?.latitude}, ${geoLocation?.longitude}`;
+
 	useEffect(() => {
 		// Use coordinates for specific location
-		fetch("https://api.weather.gov/points/41.725, -111.85", {
+		fetch("https://api.weather.gov/points/" + coords, {
 			headers: {
 				"User-Agent": process.env.NWS_USER_AGENT || "default-agent",
 			},
@@ -43,8 +47,4 @@ export function useLocalWeather() {
 			</p>
 		</div>
 	);
-	/*return {
-		temp: `${period.temperature}°${period.temperatureUnit}`,
-		word: period.shortForecast,
-	} as WeatherData;*/
 }

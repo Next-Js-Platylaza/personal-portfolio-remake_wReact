@@ -5,7 +5,6 @@ import { Project } from "@/app/lib/definitions";
 import StyleClasses from "@/app/lib/style-classes";
 import ProjectComponent from "./project";
 import Link from "next/link";
-import { useWindowWidth } from "../useWindowWidth";
 
 export default function ProjectsCarousel({
 	projects,
@@ -14,12 +13,6 @@ export default function ProjectsCarousel({
 }) {
 	const [value, setValue] = useState(2);
 	const mainDivRef: Ref<HTMLDivElement> | null = useRef(null);
-
-	const windowWidth = useWindowWidth();
-
-	useEffect(() => {
-		console.log(windowWidth);
-	}, [windowWidth]);
 
 	function onClick(forward: boolean) {
 		if (forward) {
