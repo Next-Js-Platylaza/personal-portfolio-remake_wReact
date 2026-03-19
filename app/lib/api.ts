@@ -1,0 +1,27 @@
+import { WeatherData } from "./definitions";
+
+// NWS API
+export async function getWeatherData(coords: string = "41.725, -111.85") {
+	// Use coordinates for specific location
+	const res = await fetch("https://api.weather.gov/points/" + coords, {
+		headers: {
+			"User-Agent": "default-agent",
+		},
+	});
+
+	if (!res.ok) return null;
+	const data = await res.json();
+
+	// NWS often requires a second call to get the actual forecast
+	const forecastRes = await fetch(data.properties.forecast, {
+		headers: {
+			"User-Agent": "default-agent",
+		},
+	});
+	const json = await forecastRes.json();
+	const period = json.properties.periods[0];
+	return {
+		temp: `${period.temperature}°${period.temperatureUnit}`,
+		word: period.shortForecast,
+	} as WeatherData;
+}

@@ -8,6 +8,7 @@ import StyleClasses from "@/app/lib/style-classes";
 import ArticlesSection from "@/app/ui/articles/articles-section";
 import Footer from "./ui/footer";
 import { fetchProjects } from "./lib/data";
+import ContactForm from "./ui/contact-form";
 export const metadata: Metadata = {
 	title: "Logan Blank's Portfolio Page",
 };
@@ -91,7 +92,7 @@ export default async function Home() {
 									- My Projects -
 								</h1>
 
-								<ProjectsCarousel projects={projects}/>
+								<ProjectsCarousel projects={projects} />
 
 								<br />
 								<br />
@@ -107,77 +108,7 @@ export default async function Home() {
 							<h1 className='font-["Playfair_Display",_serif] font-bold not-italic text-2xl text-center mb-5'>
 								- Contact Me -
 							</h1>
-							<form
-								id="contact"
-								className="flex flex-col mx-auto my-8 p-5 rounded-[25px]  border-3 border-gray-500 bg-gray-300 w-190"
-							>
-								<section className="flex">
-									<label htmlFor="first-name">
-										First Name:
-									</label>
-									<input
-										id="first-name"
-										type="text"
-										placeholder="John"
-										className={
-											StyleClasses.inputFormClass +
-											" mr-[12%]"
-										}
-									/>
-
-									<label htmlFor="email">Email:</label>
-									<input
-										id="email"
-										type="text"
-										placeholder="abc123@mail.com"
-										className={StyleClasses.inputFormClass}
-									/>
-								</section>
-								<br />
-								<section className="">
-									<label htmlFor="last-name">
-										Last Name:
-									</label>
-									<input
-										id="last-name"
-										type="text"
-										placeholder="Doe"
-										className={
-											StyleClasses.inputFormClass +
-											" mr-[12%]"
-										}
-									/>
-									<label htmlFor="message">Message:</label>
-									<textarea
-										id="message"
-										placeholder="Type message here"
-										className={StyleClasses.inputFormClass}
-									></textarea>
-								</section>
-								<br />
-								<section className="ml-auto w-90">
-									<select
-										id="message-type"
-										className={`${StyleClasses.inputFormClass} my-2`}
-									>
-										<option value="business">
-											Business Inquiry
-										</option>
-										<option value="feedback">
-											Feedback
-										</option>
-										<option value="general">
-											General Question
-										</option>
-									</select>
-
-									<button
-										className={`${StyleClasses.buttonClass} ml-8`}
-									>
-										Contact Me
-									</button>
-								</section>
-							</form>
+							<ContactForm />
 						</div>
 					</main>
 				</div>

@@ -1,5 +1,5 @@
 import { WeatherData } from "../lib/definitions";
-import { getWeatherData } from "../lib/actions";
+import { getWeatherData } from "../lib/api";
 
 // NWS API
 export async function useLocalWeather() {

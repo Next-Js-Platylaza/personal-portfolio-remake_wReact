@@ -1,4 +1,3 @@
-import { LocationCoords, LocationState, WeatherData } from "./definitions";
 import { getCurrentUserId, signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { z } from "zod";
@@ -8,7 +7,6 @@ import { redirect } from "next/navigation";
 import postgres from "postgres";
 import { v4 as uuidv4 } from "uuid";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
-import { error } from "console";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
@@ -138,28 +136,77 @@ export async function createUser(
 	redirect(url);
 }
 
-// NWS API
-export async function getWeatherData(coords: string = "41.725, -111.85") {
-	// Use coordinates for specific location
-	const res = await fetch("https://api.weather.gov/points/" + coords, {
-		headers: {
-			"User-Agent": "default-agent",
-		},
+const ContactFormSchema = z.object({
+	first_name: z
+		.string({ error: "Please enter a first name." })
+		.min(1, { error: "First name must contain at least 1 character" })
+		.max(20, { error: "First name must be less than 21 characters" }),
+	last_name: z
+		.string({ error: "Please enter a last name." })
+		.min(1, { error: "Last name must contain at least 1 character" })
+		.max(20, { error: "Last name must be less than 21 characters" }),
+	email: z.email({ error: "Please input a valid email address." }),
+	message: z
+		.string({ error: "Please input a valid message." })
+		.min(5, { error: "Message must contain more than 4 characters" })
+		.max(300, { error: "Message must be less than 301 characters" }),
+	message_type: z.enum(["Business Inquiry", "Feedback", "General Question"]),
+});
+
+const SendContactForm = ContactFormSchema.omit({});
+
+export type ContactFormState = {
+	fields: FormData;
+	errors?: {
+		first_name?: string[];
+		last_name?: string[];
+		email?: string[];
+		message?: string[];
+		message_type?: string[];
+	};
+	message?: string | null;
+};
+
+export async function sendContactForm(
+	prevState: ContactFormState,
+	formData: FormData,
+) {
+	// Validate form using Zod
+	const validatedFields = SendContactForm.safeParse({
+		first_name: formData.get("first_name"),
+		last_name: formData.get("last_name"),
+		email: formData.get("email"),
+		message: formData.get("message"),
+		message_type: formData.get("message_type"),
 	});
 
-	if (!res.ok) return null;
-	const data = await res.json();
+	// If form validation fails, return errors early. Otherwise, continue.
+	if (!validatedFields.success) {
+		return {
+			fields: formData,
+			errors: validatedFields.error.flatten().fieldErrors,
+			message: "Missing Fields. Failed to create account.",
+		};
+	}
 
-	// NWS often requires a second call to get the actual forecast
-	const forecastRes = await fetch(data.properties.forecast, {
-		headers: {
-			"User-Agent": "default-agent",
-		},
-	});
-	const json = await forecastRes.json();
-	const period = json.properties.periods[0];
-	return {
-		temp: `${period.temperature}°${period.temperatureUnit}`,
-		word: period.shortForecast,
-	} as WeatherData;
+	const { first_name, last_name, email, message, message_type } =
+		validatedFields.data;
+
+	try {
+		await sql`
+		INSERT INTO contact (first_name, last_name, email, message, message_type)
+		VALUES (${first_name}, ${last_name}, ${email.toLowerCase()}, ${message} ${message_type})`;
+	} catch (error) {
+		let message = "Something went wrong, please try again. | " + error;
+
+		return {
+			fields: formData,
+			message: message,
+		};
+	}
+
+	const url: string = (formData.get("redirectTo") as string) ?? "/";
+	// Revalidate the cache and redirect the user. If auto-login worked
+	revalidatePath(url);
+	redirect(url);
 }
