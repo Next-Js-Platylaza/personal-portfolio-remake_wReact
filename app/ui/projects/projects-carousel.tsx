@@ -1,6 +1,6 @@
 "use client";
 
-import { Ref, useRef, useEffect, useState } from "react";
+import { Ref, useRef, useState } from "react";
 import { Project } from "@/app/lib/definitions";
 import StyleClasses from "@/app/lib/style-classes";
 import ProjectComponent from "./project";
@@ -44,7 +44,6 @@ export default function ProjectsCarousel({
 		for (let i = 0; i < ids.length; i++)
 			projectsToReturn[i] = projects[ids[i] - 1];
 
-		console.log(projectsToReturn);
 		return projectsToReturn;
 	}
 
@@ -52,7 +51,7 @@ export default function ProjectsCarousel({
 		<div
 			ref={mainDivRef}
 			id="projects"
-			className="w-[85%] min-w-[280px] h-[250px] border-2 border-gray-400 bg-[#eaeaea] p-3 py-[8pt] rounded-[12px] mx-auto lg:bg-red-200"
+			className="w-[85%] min-w-[280px] h-[250px] border-2 border-gray-400 bg-[#eaeaea] p-3 py-[8pt] rounded-[12px] mx-auto"
 		>
 			<div className="flex mt-auto">
 				<button

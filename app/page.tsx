@@ -8,7 +8,7 @@ import StyleClasses from "@/app/lib/style-classes";
 import ArticlesSection from "@/app/ui/articles/articles-section";
 import Footer from "./ui/footer";
 import { fetchProjects } from "./lib/data";
-import ContactForm from "./ui/contact-form";
+import ContactForm from "./ui/contact/contact-form";
 export const metadata: Metadata = {
 	title: "Logan Blank's Portfolio Page",
 };
@@ -34,7 +34,7 @@ export default async function Home() {
 									<br />
 									<div className="flex">
 										<img
-											src="images/loganB.jpg"
+											src="/images/loganB.jpg"
 											alt="portrait"
 											width="250px"
 											height="375px"

@@ -2,10 +2,8 @@ import Navbar from "@/app/ui/navbar";
 
 import { Metadata } from "next";
 import { fetchArticles } from "@/app/lib/data";
-import Footer from "../ui/footer";
-import Article from "../ui/articles/article";
-import Link from "next/link";
-import StyleClasses from "../lib/style-classes";
+import Footer from "@/app/ui/footer";
+import Article from "@/app/ui/articles/article";
 export const metadata: Metadata = {
 	title: "Logan Blank's Portfolio Page",
 };

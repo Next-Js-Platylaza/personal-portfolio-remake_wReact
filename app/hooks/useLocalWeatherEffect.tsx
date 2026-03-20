@@ -14,7 +14,7 @@ export function useLocalWeather() {
 		// Use coordinates for specific location
 		fetch("https://api.weather.gov/points/" + coords, {
 			headers: {
-				"User-Agent": process.env.NWS_USER_AGENT || "default-agent",
+				"User-Agent": "default-agent",
 			},
 		})
 			.then((res) => (!res.ok ? null : res.json()))
@@ -22,8 +22,7 @@ export function useLocalWeather() {
 				// NWS often requires a second call to get the actual forecast
 				const forecastRes = fetch(data.properties.forecast, {
 					headers: {
-						"User-Agent":
-							process.env.NWS_USER_AGENT || "default-agent",
+						"User-Agent": "default-agent",
 					},
 				});
 				return forecastRes;
@@ -36,7 +35,9 @@ export function useLocalWeather() {
 					word: period.shortForecast,
 				} as WeatherData;
 			})
-			.catch((error) => console.log(error));
+			.catch((error) => {
+				throw error;
+			});
 	}, []);
 
 	return (
