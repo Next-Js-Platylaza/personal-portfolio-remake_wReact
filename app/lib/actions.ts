@@ -49,6 +49,7 @@ async function hashPassword(plainTextPassword: string): Promise<string> {
 	}
 }
 
+//#region Account Creation
 const AccountFormSchema = z.object({
 	id: z.string(),
 	name: z
@@ -136,7 +137,9 @@ export async function createUser(
 	revalidatePath(url);
 	redirect(url);
 }
+//#endregion Account Creation Form
 
+//#region Contact Me
 const ContactFormSchema = z.object({
 	first_name: z
 		.string({ error: "Please enter a first name." })
@@ -151,7 +154,7 @@ const ContactFormSchema = z.object({
 		.string({ error: "Please input a valid message." })
 		.min(5, { error: "Message must contain more than 4 characters" })
 		.max(300, { error: "Message must be less than 301 characters" }),
-	message_type: z.enum(["Business Inquiry", "Feedback", "General Question"]),
+	message_type: z.enum(["business", "feedback", "general"]),
 });
 
 const SendContactForm = ContactFormSchema.omit({});
@@ -166,6 +169,7 @@ export type ContactFormState = {
 		message_type?: string[];
 	};
 	message?: string | null;
+	wasSubmited: boolean;
 };
 
 export async function sendContactForm(
@@ -174,11 +178,11 @@ export async function sendContactForm(
 ) {
 	// Validate form using Zod
 	const validatedFields = SendContactForm.safeParse({
-		first_name: formData.get("first_name"),
-		last_name: formData.get("last_name"),
+		first_name: formData.get("first-name"),
+		last_name: formData.get("last-name"),
 		email: formData.get("email"),
 		message: formData.get("message"),
-		message_type: formData.get("message_type"),
+		message_type: formData.get("message-type"),
 	});
 
 	// If form validation fails, return errors early. Otherwise, continue.
@@ -186,7 +190,8 @@ export async function sendContactForm(
 		return {
 			fields: formData,
 			errors: validatedFields.error.flatten().fieldErrors,
-			message: "Missing Fields. Failed to create account.",
+			message: "Missing Fields. Failed to send message.",
+			wasSubmited: false,
 		};
 	}
 
@@ -196,18 +201,21 @@ export async function sendContactForm(
 	try {
 		await sql`
 		INSERT INTO contact (first_name, last_name, email, message, message_type)
-		VALUES (${first_name}, ${last_name}, ${email.toLowerCase()}, ${message} ${message_type})`;
+		VALUES (${first_name}, ${last_name}, ${email}, ${message}, ${message_type}::contact_message_type)`;
 	} catch (error) {
-		let message = "Something went wrong, please try again. | " + error;
-
 		return {
 			fields: formData,
-			message: message,
+			message: "Something went wrong, please try again. | " + error + " | SQL :"+`
+		INSERT INTO contact (first_name, last_name, email, message, message_type)
+		VALUES (${first_name}, ${last_name}, ${email}, ${message}, ${message_type}::contact_message_type)`,
+			wasSubmited: false,
 		};
 	}
 
-	const url: string = (formData.get("redirectTo") as string) ?? "/";
-	// Revalidate the cache and redirect the user. If auto-login worked
-	revalidatePath(url);
-	redirect(url);
+	return {
+			fields: formData,
+			message: "Successfully sent your message!",
+			wasSubmited: true,
+	};
 }
+//#endregion Contact Form
