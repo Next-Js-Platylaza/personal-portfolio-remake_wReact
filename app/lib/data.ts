@@ -62,7 +62,7 @@ export async function fetchArticle(id: string) {
 		return article[0];
 	} catch (error) {
 		console.error("Database Error:", error);
-		throw new Error("Failed to fetch articles.");
+		throw new Error(`Failed to fetch article ${id}.`);
 	}
 }
 export async function fetchArticles() {
@@ -91,7 +91,7 @@ export async function fetchCommentsByArticle(id: string | number) {
 	}
 }
 
-export async function fetchProject(id : string | number) {
+export async function fetchProject(id: string | number) {
 	try {
 		const projects = await sql<Project[]>`
 			SELECT * FROM projects WHERE id = ${id}
@@ -99,7 +99,7 @@ export async function fetchProject(id : string | number) {
 		return projects[0];
 	} catch (error) {
 		console.error("Database Error:", error);
-		throw new Error("Failed to fetch projects.");
+		throw new Error(`Failed to fetch project ${id}.`);
 	}
 }
 export async function fetchProjects() {
@@ -107,7 +107,9 @@ export async function fetchProjects() {
 		const projects = await sql<Project[]>`
 			SELECT * FROM projects
   		`;
-		return projects.sort((a:Project, b:Project) => Number(a.id) - Number(b.id));
+		return projects.sort(
+			(a: Project, b: Project) => Number(a.id) - Number(b.id),
+		);
 	} catch (error) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch projects.");
