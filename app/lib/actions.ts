@@ -219,3 +219,62 @@ export async function sendContactForm(
 	};
 }
 //#endregion Contact Form
+
+//#region Comment Creation
+const CommentFormSchema = z.object({
+	article_id: z.string(),
+	user_id: z.string(),
+	text: z
+		.string({ error: "Please input text." })
+		.min(1, { error: "Comment must contain 1 or more characters" })
+		.max(350, { error: "Comment must be less than 351 characters" })
+});
+
+const CreateComment = CommentFormSchema.omit({});
+
+export type CommentFormState = {
+	fields: FormData;
+	text_errors?: string[];
+	message?: string | null;
+};
+
+export async function createComment(
+	prevState: CommentFormState,
+	formData: FormData,
+) {
+	// Validate form using Zod
+	const validatedFields = CreateComment.safeParse({
+		article_id: formData.get("article-id"),
+		user_id: formData.get("user-id"),
+		text: formData.get("text"),
+	});
+
+	// If form validation fails, return errors early. Otherwise, continue.
+	if (!validatedFields.success) {
+		return {
+			fields: formData,
+			errors: validatedFields.error.flatten().fieldErrors,
+			message: "Missing Fields. Failed to create comment.",
+		};
+	}
+
+	// Prepare data for insertion into the database
+	const { article_id, user_id, text } = validatedFields.data;
+
+	try {
+		await sql`
+		INSERT INTO users (article_id, user_id, text)
+		VALUES (${article_id}, ${user_id}, ${text})`;
+	} catch (error) {
+		return {
+			fields: formData,
+			message: "Something went wrong, please try again. | " + error,
+		};
+	}
+
+	return {
+		fields: formData,
+		message: "Succesfully commented on article.",
+	};
+}
+//#endregion Comment Creation
