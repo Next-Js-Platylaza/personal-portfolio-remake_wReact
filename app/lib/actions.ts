@@ -220,7 +220,7 @@ export async function sendContactForm(
 }
 //#endregion Contact Form
 
-//#region Comment Creation
+//#region Comments
 const CommentFormSchema = z.object({
 	article_id: z.string(),
 	user_id: z.string(),
@@ -230,13 +230,14 @@ const CommentFormSchema = z.object({
 		.max(350, { error: "Comment must be less than 351 characters" })
 });
 
-const CreateComment = CommentFormSchema.omit({});
-
 export type CommentFormState = {
 	fields: FormData;
 	text_errors?: string[];
 	message?: string | null;
 };
+
+	//#region Comment Creation
+const CreateComment = CommentFormSchema.omit({});
 
 export async function createComment(
 	prevState: CommentFormState,
@@ -263,7 +264,7 @@ export async function createComment(
 
 	try {
 		await sql`
-		INSERT INTO users (article_id, user_id, text)
+		INSERT INTO comments (article_id, user_id, text)
 		VALUES (${article_id}, ${user_id}, ${text})`;
 	} catch (error) {
 		return {
@@ -278,3 +279,49 @@ export async function createComment(
 	};
 }
 //#endregion Comment Creation
+
+	//#region Comment Editing
+const EditComment = CommentFormSchema.omit({});
+
+export async function editComment(
+	prevState: CommentFormState,
+	formData: FormData,
+) {
+	// Validate form using Zod
+	const validatedFields = EditComment.safeParse({
+		article_id: formData.get("article-id"),
+		user_id: formData.get("user-id"),
+		text: formData.get("text"),
+	});
+
+	// If form validation fails, return errors early. Otherwise, continue.
+	if (!validatedFields.success) {
+		return {
+			fields: formData,
+			errors: validatedFields.error.flatten().fieldErrors,
+			message: "Missing Fields. Failed to edit comment.",
+		};
+	}
+
+	// Prepare data for insertion into the database
+	const { article_id, user_id, text } = validatedFields.data;
+
+	try {
+		await sql`
+		UPDATE comments SET text = ${text}
+		WHERE article_id = ${article_id} AND user_id = ${user_id}`;
+	} catch (error) {
+		return {
+			fields: formData,
+			message: "Something went wrong, please try again. | " + error,
+		};
+	}
+
+	return {
+		fields: formData,
+		message: "Succesfully edited comment.",
+	};
+}
+//#endregion Comment Editing
+
+//#endregion Comments
