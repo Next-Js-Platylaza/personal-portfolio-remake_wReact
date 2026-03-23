@@ -28,7 +28,7 @@ export default async function Home() {
 									return (
 										<div
 											key={key}
-											className="m-auto border-1 border-red-200"
+											className="m-auto"
 										>
 											<ProjectComponent
 												key={key}

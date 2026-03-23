@@ -36,7 +36,7 @@ export default function AddCommentComponent({
 		<div className="mt-auto">
 			<h3 className="w-25 ml-5 pt-1">Add Comment:</h3>
 			<form action={formAction} className="flex flex-col max-w-[242px] bg-gray-50 border-2 border-gray-300 rounded-[10px] px-[0.6rem]">
-				<textarea id="text" name="text" onChange={handleChange} maxLength={maxLength} defaultValue={state.fields.get("text") as string} className={`my-2 ml-auto h-22 w-55 max-lg:w-28 bg-gray-100 ${StyleClasses.inputFormClass}`}/>
+				<textarea id="text" name="text" placeholder="Type comment here." onChange={handleChange} maxLength={maxLength} defaultValue={state.fields.get("text") as string} className={`my-2 ml-auto h-22 w-55 max-lg:w-28 bg-gray-100 ${StyleClasses.inputFormClass}`}/>
 				<input hidden readOnly id="article-id" name="article-id" value={article_id}/>
 				<p className="text-sm text-gray-500 ml-auto mb-1 -mt-2">
         			{text.length} / {maxLength} characters
