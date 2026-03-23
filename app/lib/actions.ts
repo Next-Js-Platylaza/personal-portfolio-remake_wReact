@@ -223,16 +223,18 @@ export async function sendContactForm(
 //#region Comments
 const CommentFormSchema = z.object({
 	article_id: z.string(),
-	user_id: z.string(),
 	text: z
 		.string({ error: "Please input text." })
 		.min(1, { error: "Comment must contain 1 or more characters" })
-		.max(350, { error: "Comment must be less than 351 characters" })
+		.max(100, { error: "Comment must be less than 101 characters" })
 });
 
 export type CommentFormState = {
 	fields: FormData;
-	text_errors?: string[];
+	errors?: {
+		article_id?: string[],
+		text?: string[],
+	};
 	message?: string | null;
 };
 
@@ -246,7 +248,6 @@ export async function createComment(
 	// Validate form using Zod
 	const validatedFields = CreateComment.safeParse({
 		article_id: formData.get("article-id"),
-		user_id: formData.get("user-id"),
 		text: formData.get("text"),
 	});
 
@@ -255,12 +256,13 @@ export async function createComment(
 		return {
 			fields: formData,
 			errors: validatedFields.error.flatten().fieldErrors,
-			message: "Missing Fields. Failed to create comment.",
+			message: "DisplayError",
 		};
 	}
 
 	// Prepare data for insertion into the database
-	const { article_id, user_id, text } = validatedFields.data;
+	const { article_id, text } = validatedFields.data;
+	const user_id = await getCurrentUserId() as string;
 
 	try {
 		await sql`
@@ -273,6 +275,11 @@ export async function createComment(
 		};
 	}
 
+	const url: string = (formData.get("redirectTo") as string) ?? `/articles/${article_id}`;
+	// Revalidate the cache and redirect the user.
+	revalidatePath(url);
+
+	formData.set("text", "");
 	return {
 		fields: formData,
 		message: "Succesfully commented on article.",
@@ -290,7 +297,6 @@ export async function editComment(
 	// Validate form using Zod
 	const validatedFields = EditComment.safeParse({
 		article_id: formData.get("article-id"),
-		user_id: formData.get("user-id"),
 		text: formData.get("text"),
 	});
 
@@ -304,7 +310,8 @@ export async function editComment(
 	}
 
 	// Prepare data for insertion into the database
-	const { article_id, user_id, text } = validatedFields.data;
+	const { article_id, text } = validatedFields.data;
+	const user_id = await getCurrentUserId() as string;
 
 	try {
 		await sql`

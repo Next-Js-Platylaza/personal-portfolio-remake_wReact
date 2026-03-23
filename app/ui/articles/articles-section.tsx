@@ -19,7 +19,7 @@ export default async function ArticlesSection() {
 			</div>
 			<div className="-mt-1 h-6 text-center">
 				<Link
-					href="/projects"
+					href="/articles"
 					className={`${StyleClasses.linkClass} mt-1`}
 				>
 					See All

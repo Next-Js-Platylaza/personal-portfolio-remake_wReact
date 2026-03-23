@@ -90,6 +90,19 @@ export async function fetchCommentsByArticle(id: string | number) {
 		throw new Error("Failed to fetch comments.");
 	}
 }
+export async function fetchComment(id: string | number) {
+	try {
+		const comment = await sql<ArticleComment[]>`
+			SELECT * FROM comments WHERE id = ${id}
+  		`;
+
+		return comment[0];
+	} catch (error) {
+		console.error("Database Error:", error);
+		throw new Error("Failed to fetch comments.");
+	}
+}
+
 
 export async function fetchProject(id: string | number) {
 	try {

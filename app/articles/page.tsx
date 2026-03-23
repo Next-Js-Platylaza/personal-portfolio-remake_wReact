@@ -21,8 +21,8 @@ export default async function Home() {
 							<h1 className='font-["Playfair_Display",_serif] font-bold not-italic text-2xl text-center mb-5'>
 								- My Articles -
 							</h1>
-							<div className="w-[85%] h-70 border-2 border-gray-400 rounded-[8px] bg-[#eaeaea] mx-auto">
-								<div className="flex gap-3 h-63 p-[8pt] ">
+							<div className="w-[85%] h-70 min-w-[450px] border-2 border-gray-400 rounded-[8px] bg-[#eaeaea] mx-auto max-lg:h-133 max-lg:w-[55%]">
+								<div className="flex gap-3 h-63 p-[8pt] max-lg:flex-col max-lg:gap-0 max-lg:p-0">
 									{articles.map((art) => {
 										const key: string = `li-${art.title}`;
 										return (
