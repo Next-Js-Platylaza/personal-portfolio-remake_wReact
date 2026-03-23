@@ -2,6 +2,7 @@ import { signOut, getCurrentUserName } from "@/auth";
 import NavLinks from "@/app/ui/nav-links";
 import Link from "next/link";
 import { useLocalWeather } from "../hooks/useLocalWeather";
+import SignInButton from "./sign-in-button";
 
 export default async function Navbar({
 	children,
@@ -29,7 +30,7 @@ export default async function Navbar({
 						className={signInSignOutClass}
 						onClick={async () => {
 							"use server";
-							await signOut({ redirectTo: "/" });
+							await signOut({ });
 						}}
 					>
 						<div>
@@ -38,9 +39,7 @@ export default async function Navbar({
 						</div>
 					</button>
 				) : (
-					<Link className={signInSignOutClass} href="account/login">
-						<div>Sign In</div>
-					</Link>
+					<SignInButton/>
 				)}
 			</div>
 		</div>
