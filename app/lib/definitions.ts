@@ -9,6 +9,7 @@ export type Article = {
 	id: string;
 	title: string;
 	text: string;
+	url_slug: string;
 };
 export type ArticleComment = {
 	id: string;

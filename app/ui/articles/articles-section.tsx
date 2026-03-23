@@ -14,7 +14,7 @@ export default async function ArticlesSection() {
 			<div className="flex gap-3 h-63 p-3 py-[8pt] mt-auto">
 				{articles.map((art) => {
 					const key: string = `li-${art.title}`;
-					return <ArticleComponent key={key} id={art.id} />;
+					return <ArticleComponent key={key} slug={art.url_slug} />;
 				})}
 			</div>
 			<div className="-mt-1 h-6 text-center">

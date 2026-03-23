@@ -28,7 +28,7 @@ export default async function Home() {
 										return (
 											<Article
 												key={key}
-												id={art.id}
+												slug={art.url_slug}
 												className="flex flex-col max-w-[425px] bg-gray-200 border-3 border-gray-400 rounded-[15px] p-2 mx-auto mt-5"
 											/>
 										);

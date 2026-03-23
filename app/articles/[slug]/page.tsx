@@ -1,9 +1,6 @@
 import Navbar from "@/app/ui/navbar";
 import { getCurrentUserId } from "@/auth";
-import {
-	fetchArticle,
-	fetchCommentsByArticle,
-} from "@/app/lib/data";
+import { fetchArticleBySlug, fetchCommentsByArticle } from "@/app/lib/data";
 import Comment from "@/app/ui/articles/comments/comment";
 import AddComment from "@/app/ui/articles/comments/addComment";
 
@@ -12,12 +9,14 @@ export const metadata: Metadata = {
 	title: "Logan Blank's Portfolio Page",
 };
 
-export default async function Home(props: { params: Promise<{ id: string }> }) {
+export default async function Home(props: {
+	params: Promise<{ slug: string }>;
+}) {
 	const userId = await getCurrentUserId();
-	const articleID = (await props.params).id;
+	const articleSlug = decodeURIComponent((await props.params).slug);
 
-	const article = await fetchArticle(articleID);
-	const comments = (await fetchCommentsByArticle(articleID)).slice(-7);
+	const article = await fetchArticleBySlug(articleSlug);
+	const comments = (await fetchCommentsByArticle(article.id)).slice(-7);
 
 	return (
 		<div className='h-screen font-["Open_Sans",_serif] font-[450] not-italic [font-variation-settings:"wdth"_100] bg-[#dddddd]'>
@@ -29,10 +28,17 @@ export default async function Home(props: { params: Promise<{ id: string }> }) {
 							<h1 className="ml-5 text-3xl">{`${article.title}`}</h1>
 							<p className="mt-1 ml-2">{article.text}</p>
 							<div className="flex flex-row mt-auto mb-1 px-1">
-								{userId && <AddComment article_id={articleID}/>}
+								{userId && (
+									<AddComment article_id={article.id} />
+								)}
 								<div className="mt-auto ml-auto pl-[0.6rem]">
-									{comments.map((comment)=>{
-										return <Comment key={comment.id} id={comment.id}/>
+									{comments.map((comment) => {
+										return (
+											<Comment
+												key={comment.id}
+												id={comment.id}
+											/>
+										);
 									})}
 								</div>
 							</div>

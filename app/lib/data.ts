@@ -53,7 +53,7 @@ export async function fetchUsers() {
 	}
 }
 
-export async function fetchArticle(id: string) {
+export async function fetchArticleById(id: string) {
 	try {
 		const article = await sql<Article[]>`
 			SELECT * FROM articles WHERE id = ${id}
@@ -65,6 +65,19 @@ export async function fetchArticle(id: string) {
 		throw new Error(`Failed to fetch article ${id}.`);
 	}
 }
+export async function fetchArticleBySlug(slug: string) {
+	try {
+		const article = await sql<Article[]>`
+			SELECT * FROM articles WHERE url_slug = ${slug}
+  		`;
+
+		return article[0];
+	} catch (error) {
+		console.error("Database Error:", error);
+		throw new Error(`Failed to fetch article ${slug}.`);
+	}
+}
+
 export async function fetchArticles() {
 	try {
 		const articles = await sql<Article[]>`
@@ -102,7 +115,6 @@ export async function fetchComment(id: string | number) {
 		throw new Error("Failed to fetch comments.");
 	}
 }
-
 
 export async function fetchProject(id: string | number) {
 	try {
