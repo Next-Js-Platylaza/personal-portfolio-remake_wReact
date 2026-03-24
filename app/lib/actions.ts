@@ -338,4 +338,53 @@ export async function editComment(
 }
 //#endregion Comment Editing
 
+	//#region Comment Deleting
+const DeleteComment = CommentFormSchema.omit({});
+
+export async function deleteComment(
+	prevState: CommentFormState,
+	formData: FormData,
+) {
+	// Validate form using Zod
+	const validatedFields = DeleteComment.safeParse({
+		text: "deleting",
+		comment_id: formData.get("comment-id"),
+		article_id: formData.get("article-id"),
+	});
+
+	// If form validation fails, return errors early. Otherwise, continue.
+	if (!validatedFields.success) {
+		return {
+			fields: formData,
+			errors: validatedFields.error.flatten().fieldErrors,
+			message: "DisplayError",
+		};
+	}
+
+	// Prepare data for insertion into the database
+	const { comment_id, article_id } = validatedFields.data;
+	const user_id = await getCurrentUserId() as string;
+
+	try {
+		await sql`
+		DELETE FROM comments
+		WHERE id = ${comment_id} AND user_id = ${user_id}`;
+	} catch (error) {
+		return {
+			fields: formData,
+			message: "Something went wrong, please try again. | " + error,
+		};
+	}
+
+	const url: string = (formData.get("redirectTo") as string) ?? `/articles/${article_id}`;
+	// Revalidate the cache and refresh page.
+	revalidatePath(url);
+
+	return {
+		fields: formData,
+		message: "Succesfully deleted comment.",
+	};
+}
+//#endregion Comment Deleting
+
 //#endregion Comments
