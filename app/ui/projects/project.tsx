@@ -5,12 +5,10 @@ import { Project } from "@/app/lib/definitions";
 
 export default function ProjectComponent({ proj }: { proj: Project }) {
 	return (
-		<button
-			className="w-50 h-50 text-[#353535] cursor-pointer border-[2px] border-[solid] border-[#00000055] rounded-[18px] bg-[#dedede]"
-		>
+		<button className="w-50 h-50 text-[#353535] cursor-pointer border-[2px] border-[solid] border-[#00000055] rounded-[18px] bg-[#dedede]">
 			<Link
 				key={proj.title}
-				href={proj.href}
+				href={`projects/${proj.slug}`}
 				className="flex flex-col items-center "
 			>
 				<h4

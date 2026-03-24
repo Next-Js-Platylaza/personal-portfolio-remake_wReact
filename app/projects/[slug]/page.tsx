@@ -1,17 +1,17 @@
 import Navbar from "@/app/ui/navbar";
 
 import { Metadata } from "next";
-import {
-	fetchProject,
-} from "@/app/lib/data";
+import { fetchProject } from "@/app/lib/data";
 export const metadata: Metadata = {
 	title: "Logan Blank's Portfolio Page",
 };
 
-export default async function Home(props: { params: Promise<{ id: string }> }) {
-	const projectID = (await props.params).id;
+export default async function Home(props: {
+	params: Promise<{ slug: string }>;
+}) {
+	const projectSlug = (await props.params).slug;
 
-	const project= await fetchProject(projectID);
+	const project = await fetchProject(projectSlug);
 
 	return (
 		<div className='h-screen font-["Open_Sans",_serif] font-[450] not-italic [font-variation-settings:"wdth"_100] bg-[#dddddd]'>
@@ -20,7 +20,7 @@ export default async function Home(props: { params: Promise<{ id: string }> }) {
 				<div className="w-full h-full items-center justify-items-center mt-15">
 					<main className="w-full h-full row-start-2 ">
 						<div className="flex flex-col flex-1 max-w-[900px] min-w-[400px] w-[55%] h-[75%] bg-gray-200 border-3 border-gray-400 rounded-[15px] p-2 m-auto">
-							<h4 className="text-[#222233] text-xl mb-3" >
+							<h4 className="text-[#222233] text-xl mb-3">
 								{project.title}
 							</h4>
 							<p className="h-[100%] max-h-[100px] m-auto text-center w-full">

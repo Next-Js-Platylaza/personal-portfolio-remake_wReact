@@ -21,11 +21,11 @@ export default function ContactForm() {
 	const [state, formAction] = useActionState(sendContactForm, initialState);
 
 	const message_types: string[] = ["business", "feedback", "general"];
-	const message_type_titles: string[] = ["Business Inquiry", "Feedback", "General Question"];
-
-	useEffect(()=>{
-		console.log(state.fields.get("message-type") as string);
-	}, [state.fields]);
+	const message_type_titles: string[] = [
+		"Business Inquiry",
+		"Feedback",
+		"General Question",
+	];
 
 	return (
 		<form
@@ -39,33 +39,49 @@ export default function ContactForm() {
 					idLabel="first-name"
 					labelText="First Name:"
 					errors={state.errors?.first_name}
-				><input
-							id="first-name"
-							name="first-name"
-							type="text"
-							placeholder={state.wasSubmited ? state.fields.get("first-name") as string : "John"}
-							defaultValue={
-								state.wasSubmited ? "" : state.fields.get("first-name") as string
-							}
-							className={StyleClasses.inputFormClass}
-							aria-describedby="first-name-error"
-				/></ContactFormInput>
+				>
+					<input
+						id="first-name"
+						name="first-name"
+						type="text"
+						placeholder={
+							state.wasSubmited
+								? (state.fields.get("first-name") as string)
+								: "John"
+						}
+						defaultValue={
+							state.wasSubmited
+								? ""
+								: (state.fields.get("first-name") as string)
+						}
+						className={StyleClasses.inputFormClass}
+						aria-describedby="first-name-error"
+					/>
+				</ContactFormInput>
 				{/* Email */}
 				<ContactFormInput
 					idLabel="email"
 					labelText="Email:"
 					errors={state.errors?.email}
 					divClass="ml-auto"
-				><input
-					id="email"
-					name="email"
-					type="text"
-					placeholder={state.wasSubmited ? state.fields.get("email") as string : "abc123@mail.com"}
-					defaultValue={
-						state.wasSubmited ? "" : state.fields.get("email") as string
-					}
-					className={StyleClasses.inputFormClass}
-				/></ContactFormInput>
+				>
+					<input
+						id="email"
+						name="email"
+						type="text"
+						placeholder={
+							state.wasSubmited
+								? (state.fields.get("email") as string)
+								: "abc123@mail.com"
+						}
+						defaultValue={
+							state.wasSubmited
+								? ""
+								: (state.fields.get("email") as string)
+						}
+						className={StyleClasses.inputFormClass}
+					/>
+				</ContactFormInput>
 			</section>
 			<br />
 			<section className="flex">
@@ -74,13 +90,20 @@ export default function ContactForm() {
 					idLabel="last-name"
 					labelText="Last Name:"
 					errors={state.errors?.last_name}
-					><input
+				>
+					<input
 						id="last-name"
 						name="last-name"
 						type="text"
-						placeholder={state.wasSubmited ? state.fields.get("last-name") as string : "Doe"}
+						placeholder={
+							state.wasSubmited
+								? (state.fields.get("last-name") as string)
+								: "Doe"
+						}
 						defaultValue={
-							state.wasSubmited ? "" : state.fields.get("last-name") as string
+							state.wasSubmited
+								? ""
+								: (state.fields.get("last-name") as string)
 						}
 						className={StyleClasses.inputFormClass}
 					/>
@@ -91,19 +114,26 @@ export default function ContactForm() {
 					labelText="Message:"
 					errors={state.errors?.message}
 					divClass="ml-auto"
-					><textarea
+				>
+					<textarea
 						id="message"
-						name="message"			
-						placeholder={state.wasSubmited ? state.fields.get("message") as string : "Type message here"}
+						name="message"
+						placeholder={
+							state.wasSubmited
+								? (state.fields.get("message") as string)
+								: "Type message here"
+						}
 						defaultValue={
-							state.wasSubmited ? "" : state.fields.get("message") as string
+							state.wasSubmited
+								? ""
+								: (state.fields.get("message") as string)
 						}
 						className={StyleClasses.inputFormClass}
 					/>
 				</ContactFormInput>
 			</section>
 			<br />
-			
+
 			<section className="flex flex-row w-full -mb-1">
 				{/* Form Message */}
 				<div
@@ -112,7 +142,14 @@ export default function ContactForm() {
 					aria-atomic="true"
 					className="my-auto"
 				>
-					<p key={state.message} className={state.errors ? StyleClasses.formErrorClass : "mt-1 ml-5 text-sm text-slate-700"}>
+					<p
+						key={state.message}
+						className={
+							state.errors
+								? StyleClasses.formErrorClass
+								: "mt-1 ml-5 text-sm text-slate-700"
+						}
+					>
 						{state.message}
 					</p>
 				</div>
@@ -129,7 +166,10 @@ export default function ContactForm() {
 					<option value="general">General Question</option>
 				</select>
 				{/* Submit Button */}
-				<button type="submit" className={`${StyleClasses.buttonClass} my-0.5 ml-8`}>
+				<button
+					type="submit"
+					className={`${StyleClasses.buttonClass} my-0.5 ml-8`}
+				>
 					Contact Me
 				</button>
 			</section>

@@ -25,8 +25,8 @@ export type LinkStructure = {
 
 export type Project = {
 	id: string;
-	href: string;
 	title: string;
+	slug: string;
 	description: string;
 };
 
