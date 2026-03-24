@@ -222,6 +222,7 @@ export async function sendContactForm(
 
 //#region Comments
 const CommentFormSchema = z.object({
+	comment_id: z.string(),
 	article_id: z.string(),
 	text: z
 		.string({ error: "Please input text." })
@@ -239,7 +240,7 @@ export type CommentFormState = {
 };
 
 	//#region Comment Creation
-const CreateComment = CommentFormSchema.omit({});
+const CreateComment = CommentFormSchema.omit({ comment_id:true });
 
 export async function createComment(
 	prevState: CommentFormState,
@@ -276,7 +277,7 @@ export async function createComment(
 	}
 
 	const url: string = (formData.get("redirectTo") as string) ?? `/articles/${article_id}`;
-	// Revalidate the cache and redirect the user.
+	// Revalidate the cache and refresh page.
 	revalidatePath(url);
 
 	formData.set("text", "");
@@ -296,6 +297,7 @@ export async function editComment(
 ) {
 	// Validate form using Zod
 	const validatedFields = EditComment.safeParse({
+		comment_id: formData.get("comment-id"),
 		article_id: formData.get("article-id"),
 		text: formData.get("text"),
 	});
@@ -305,18 +307,18 @@ export async function editComment(
 		return {
 			fields: formData,
 			errors: validatedFields.error.flatten().fieldErrors,
-			message: "Missing Fields. Failed to edit comment.",
+			message: "DisplayError",
 		};
 	}
 
 	// Prepare data for insertion into the database
-	const { article_id, text } = validatedFields.data;
+	const { comment_id, article_id, text } = validatedFields.data;
 	const user_id = await getCurrentUserId() as string;
 
 	try {
 		await sql`
 		UPDATE comments SET text = ${text}
-		WHERE article_id = ${article_id} AND user_id = ${user_id}`;
+		WHERE id = ${comment_id} AND article_id = ${article_id} AND user_id = ${user_id}`;
 	} catch (error) {
 		return {
 			fields: formData,
@@ -324,6 +326,11 @@ export async function editComment(
 		};
 	}
 
+	const url: string = (formData.get("redirectTo") as string) ?? `/articles/${article_id}`;
+	// Revalidate the cache and refresh page.
+	revalidatePath(url);
+
+	formData.set("sent", "true");
 	return {
 		fields: formData,
 		message: "Succesfully edited comment.",

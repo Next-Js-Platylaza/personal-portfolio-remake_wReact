@@ -1,10 +1,11 @@
 import Navbar from "@/app/ui/navbar";
 import { getCurrentUserId } from "@/auth";
-import { fetchArticleBySlug, fetchCommentsByArticle } from "@/app/lib/data";
+import { fetchArticleBySlug, fetchCommentsByArticle, fetchUser } from "@/app/lib/data";
 import Comment from "@/app/ui/articles/comments/comment";
 import AddComment from "@/app/ui/articles/comments/addComment";
 
 import { Metadata } from "next";
+import CommentSection from "@/app/ui/articles/comments/comment-section";
 export const metadata: Metadata = {
 	title: "Logan Blank's Portfolio Page",
 };
@@ -24,23 +25,11 @@ export default async function Home(props: {
 				<Navbar>{<></>}</Navbar>
 				<div className="w-full h-full items-center justify-items-center mt-15">
 					<main className="w-full h-full row-start-2 ">
-						<div className="flex flex-col flex-1 max-w-[900px] min-w-[550px] w-[55%] h-[75%] bg-gray-200 border-3 border-gray-400 rounded-[15px] p-2 m-auto lg:min-w-[650px]">
+						<div className="flex flex-col flex-1 max-w-[900px] min-w-[550px] w-[55%] h-[75%] bg-gray-200 border-3 border-gray-400 rounded-[15px] p-2 m-auto lg:min-w-[650px] max-xl:min-h-[720px]">
 							<h1 className="ml-5 text-3xl">{`${article.title}`}</h1>
 							<p className="mt-1 ml-2">{article.text}</p>
 							<div className="flex flex-row mt-auto mb-1 px-1">
-								{userId && (
-									<AddComment article_id={article.id} />
-								)}
-								<div className="mt-auto ml-auto pl-[0.6rem]">
-									{comments.map((comment) => {
-										return (
-											<Comment
-												key={comment.id}
-												id={comment.id}
-											/>
-										);
-									})}
-								</div>
+								<CommentSection user_id={userId} article_id={article.id} comments={comments}/>
 							</div>
 						</div>
 					</main>

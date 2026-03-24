@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { fetchArticleBySlug, fetchCommentsByArticle } from "@/app/lib/data";
+import { fetchArticleBySlug, fetchCommentsByArticle, fetchUser } from "@/app/lib/data";
 import Comment from "@/app/ui/articles/comments/comment";
 
 export default async function ArticleComponent({
@@ -13,6 +13,7 @@ export default async function ArticleComponent({
 	const comments = await fetchCommentsByArticle(article.id);
 
 	const mostRecentComment = comments.at(-1);
+	const mostRecentCommenter = await fetchUser("id", mostRecentComment?.user_id ?? "0");
 
 	const divClass =
 		className ??
@@ -26,7 +27,8 @@ export default async function ArticleComponent({
 			</Link>
 			{mostRecentComment && (
 				<Comment
-					id={mostRecentComment.id}
+					comment={mostRecentComment}
+					username={mostRecentCommenter!.name}
 					additionalClasses="mt-auto"
 				/>
 			)}
