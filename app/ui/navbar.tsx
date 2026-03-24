@@ -3,6 +3,8 @@ import NavLinks from "@/app/ui/nav-links";
 import Link from "next/link";
 import SignInButton from "./sign-in-button";
 import WeatherComponent from "./weather";
+import { Suspense } from "react";
+import { CrossPageData } from "../lib/api";
 
 export default async function Navbar({
 	children,
@@ -18,7 +20,9 @@ export default async function Navbar({
 			<NavLinks />
 			{children}
 			<div className={`flex gap-2 max-md:gap-0 max-lg:gap-1 md:ml-auto`}>
-				<WeatherComponent />
+				<Suspense>
+					<WeatherComponent />
+				</Suspense>
 			</div>
 			<div className={`flex gap-2 max-md:gap-0 max-lg:gap-1 md:ml-auto`}>
 				<Link href="/#contact" className={signInSignOutClass}>
