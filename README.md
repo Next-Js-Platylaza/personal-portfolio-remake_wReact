@@ -15,5 +15,5 @@ Recreate your personal portfolio as a NextJs application. Have a carousel of lin
 
 ## Hosted Projects:
 
-https://frontend-framework-portfolio-3ue3cvb6p-platylazas-projects.vercel.app/
+https://frontend-framework-portfolio.vercel.app/
 https://loganblank.huskisites.com/webm1021/guitar-shop-revisited_server-side-final/
