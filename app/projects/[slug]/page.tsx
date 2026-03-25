@@ -14,7 +14,7 @@ export default async function Home(props: {
 	const project = await fetchProject(projectSlug);
 
 	return (
-		<div className='h-screen font-["Open_Sans",_serif] font-[450] not-italic [font-variation-settings:"wdth"_100] bg-[#dddddd]'>
+		<div className="h-screen font-[450] not-italic bg-[#dddddd]">
 			<div className="w-full h-full">
 				<Navbar>{<></>}</Navbar>
 				<div className="w-full h-full items-center justify-items-center mt-15">

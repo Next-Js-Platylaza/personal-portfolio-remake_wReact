@@ -19,7 +19,7 @@ export default async function Home() {
 
 	return (
 		<>
-			<div className='h-full font-["Open_Sans",_serif] font-[450] not-italic [font-variation-settings:"wdth"_100] bg-[#dddddd]'>
+			<div className="h-full font-[450] not-italic bg-[#dddddd]">
 				<Navbar>{<></>}</Navbar>
 				<div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center h-[74%]">
 					<main className="flex flex-col gap-[16px] row-start-2 items-center">

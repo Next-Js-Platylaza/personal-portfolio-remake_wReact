@@ -8,7 +8,11 @@ export default function ProjectComponent({ proj }: { proj: Project }) {
 		<button className="w-50 h-50 text-[#353535] cursor-pointer border-[2px] border-[solid] border-[#00000055] rounded-[18px] bg-[#dedede]">
 			<Link
 				key={proj.title}
-				href={`projects/${proj.slug}`}
+				href={
+					proj.link.includes("http")
+						? `${proj.link}`
+						: `/projects/${proj.link}`
+				}
 				className="flex flex-col items-center "
 			>
 				<h4

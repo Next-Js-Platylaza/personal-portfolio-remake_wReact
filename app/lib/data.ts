@@ -116,15 +116,15 @@ export async function fetchComment(id: string | number) {
 	}
 }
 
-export async function fetchProject(slug: string) {
+export async function fetchProject(link: string) {
 	try {
 		const projects = await sql<Project[]>`
-			SELECT * FROM projects WHERE slug = ${slug}
+			SELECT * FROM projects WHERE link = ${link}
   		`;
 		return projects[0];
 	} catch (error) {
 		console.error("Database Error:", error);
-		throw new Error(`Failed to fetch project ${slug}.`);
+		throw new Error(`Failed to fetch project ${link}.`);
 	}
 }
 export async function fetchProjects() {
