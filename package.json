@@ -16,6 +16,7 @@
 		"postgres": "^3.4.7",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
+		"sensible-lorem": "^1.0.3",
 		"tailwindcss": "3.4.17",
 		"typescript": "^5.7.3",
 		"use-debounce": "^10.0.6",

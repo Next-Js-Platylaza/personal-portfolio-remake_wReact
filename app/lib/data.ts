@@ -119,7 +119,7 @@ export async function fetchComment(id: string | number) {
 export async function fetchProject(link: string) {
 	try {
 		const projects = await sql<Project[]>`
-			SELECT id, title, link, description FROM projects WHERE link = ${link}
+			SELECT id, title, link, description, img_src FROM projects WHERE link = ${link}
   		`;
 		return projects[0];
 	} catch (error) {
@@ -130,7 +130,7 @@ export async function fetchProject(link: string) {
 export async function fetchProjects() {
 	try {
 		const projects = await sql<Project[]>`
-			SELECT id, title, link, description FROM projects
+			SELECT id, title, link, description, img_src FROM projects
   		`;
 		return projects.sort(
 			(a: Project, b: Project) => Number(a.id) - Number(b.id),

@@ -28,6 +28,7 @@ export type Project = {
 	title: string;
 	link: string;
 	description: string;
+	img_src: string;
 };
 
 export type InputAttributes = {

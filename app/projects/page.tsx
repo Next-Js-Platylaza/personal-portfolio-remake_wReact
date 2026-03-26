@@ -21,7 +21,7 @@ export default async function Home() {
 						<main className="w-full h-full row-start-2 ">
 							<div
 								id="projects"
-								className="flex flex-wrap w-[85%] min-w-[450px] h-[260px] border-2 border-gray-400 bg-[#eaeaea] p-3 py-[8pt] rounded-[12px] mx-auto min-xl:min-w-[1100px] max-xl:h-[450px] max-md:h-[650px]"
+								className="flex flex-wrap gap-2.5 w-[85%] min-w-[450px] h-[260px] border-2 border-gray-400 bg-[#eaeaea] p-[8pt] rounded-[12px] mx-auto min-xl:min-w-[1100px] max-lg:h-[450px] max-md:h-[600px]"
 							>
 								{projects.map((proj) => {
 									const key: string = `li-${proj.title}`;

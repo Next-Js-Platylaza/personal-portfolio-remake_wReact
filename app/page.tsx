@@ -63,7 +63,6 @@ export default async function Home() {
 											</Link>
 										</div>
 									</div>
-
 									<p className="pt-4 pb-6">
 										I'm 17, I like playing and making video
 										games. I was first introduced to HTML
