@@ -26,7 +26,7 @@ export default async function ArticlesSection() {
 	return (
 		<div
 			id="articles"
-			className="w-[85%] h-70 border-2 border-gray-400 rounded-[8px] bg-[#eaeaea] mx-auto"
+			className="w-[85%] h-75 border-2 border-gray-400 rounded-[8px] bg-[#eaeaea] mx-auto"
 		>
 			<div className="flex gap-3 h-63 p-3 py-[8pt] mt-auto">
 				<Suspense
@@ -46,11 +46,8 @@ export default async function ArticlesSection() {
 					})}
 				</Suspense>
 			</div>
-			<div className="-mt-1 h-6 text-center">
-				<Link
-					href="/articles"
-					className={`${StyleClasses.linkClass} mt-1`}
-				>
+			<div className="mt-2 h-6 text-center">
+				<Link href="/articles" className={`${StyleClasses.linkClass}`}>
 					See All
 				</Link>
 			</div>

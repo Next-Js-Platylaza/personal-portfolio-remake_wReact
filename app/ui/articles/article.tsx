@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { fetchArticleBySlug, fetchCommentsByArticle, fetchUser } from "@/app/lib/data";
+import {
+	fetchArticleBySlug,
+	fetchCommentsByArticle,
+	fetchUser,
+} from "@/app/lib/data";
 import Comment from "@/app/ui/articles/comments/comment";
 
 export default async function ArticleComponent({
@@ -13,11 +17,14 @@ export default async function ArticleComponent({
 	const comments = await fetchCommentsByArticle(article.id);
 
 	const mostRecentComment = comments.at(-1);
-	const mostRecentCommenter = await fetchUser("id", mostRecentComment?.user_id ?? "0");
+	const mostRecentCommenter = await fetchUser(
+		"id",
+		mostRecentComment?.user_id ?? "0",
+	);
 
 	const divClass =
 		className ??
-		"flex flex-col max-w-[325px] bg-gray-200 border-3 border-gray-400 rounded-[15px] p-2";
+		"flex flex-col max-w-[325px] bg-gray-200 border-3 border-gray-400 rounded-[15px] p-2 h-[250px]";
 
 	return (
 		<div className={divClass}>

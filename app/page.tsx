@@ -1,7 +1,6 @@
 import Navbar from "@/app/ui/navbar";
 import { getCurrentUserId } from "@/auth";
 
-import { Metadata } from "next";
 import ProjectsCarousel from "@/app/ui/projects/projects-carousel";
 import Link from "next/link";
 import StyleClasses from "@/app/lib/style-classes";
@@ -9,6 +8,8 @@ import ArticlesSection from "@/app/ui/articles/articles-section";
 import Footer from "./ui/footer";
 import { fetchProjects } from "./lib/data";
 import ContactForm from "./ui/contact/contact-form";
+
+import { Metadata } from "next";
 export const metadata: Metadata = {
 	title: "Logan Blank's Portfolio Page",
 };
