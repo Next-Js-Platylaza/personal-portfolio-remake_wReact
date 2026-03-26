@@ -1,6 +1,6 @@
 "use client";
 
-import { Ref, useRef, useState } from "react";
+import { Ref, useRef, useState, Suspense } from "react";
 import { Project } from "@/app/lib/definitions";
 import StyleClasses from "@/app/lib/style-classes";
 import ProjectComponent from "./project";
@@ -21,6 +21,12 @@ export default function ProjectsCarousel({
 		} else if (value <= 1) setValue(projects.length);
 		else setValue((v) => v - 1);
 	}
+
+	let fallbackProject = (
+		<div className="m-auto">
+			<div className="w-50 h-50 p-0.15 text-[#353535] cursor-pointer border-4 border-[solid] border-[#00000055] rounded-[18px] bg-[#dedede]" />
+		</div>
+	);
 
 	function getProjectsToDisplay() {
 		let idToSet = 0;
@@ -63,14 +69,24 @@ export default function ProjectsCarousel({
 					<p className="-ml-2 -mt-1">&larr;</p>
 				</button>
 				<ul className="flex w-[70%] min-w-[700px] m-auto">
-					{getProjectsToDisplay().map((proj) => {
-						const key: string = `li-${proj.title}`;
-						return (
-							<li key={key} className="m-auto">
-								<ProjectComponent proj={proj} />
-							</li>
-						);
-					})}
+					<Suspense
+						fallback={
+							<>
+								{fallbackProject}
+								{fallbackProject}
+								{fallbackProject}
+							</>
+						}
+					>
+						{getProjectsToDisplay().map((proj) => {
+							const key: string = `li-${proj.title}`;
+							return (
+								<li key={key} className="m-auto">
+									<ProjectComponent proj={proj} />
+								</li>
+							);
+						})}
+					</Suspense>
 				</ul>
 				<button
 					className={`${StyleClasses.buttonClass} w-16 h-16 font-bold text-5xl -ml-10 m-auto`}

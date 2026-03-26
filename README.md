@@ -17,3 +17,5 @@ Recreate your personal portfolio as a NextJs application. Have a carousel of lin
 
 https://frontend-framework-portfolio.vercel.app/
 https://loganblank.huskisites.com/webm1021/guitar-shop-revisited_server-side-final/
+
+https://freesvg.org/img/modern-city-skyline_1757518955.png

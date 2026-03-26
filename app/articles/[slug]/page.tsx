@@ -4,11 +4,10 @@ import { fetchArticleBySlug, fetchCommentsByArticle } from "@/app/lib/data";
 import { Metadata } from "next";
 import CommentSection from "@/app/ui/articles/comments/comment-section";
 import { Suspense } from "react";
-import AddComment from "@/app/ui/articles/comments/addComment";
 import Comment from "@/app/ui/articles/comments/comment";
 import { ArticleComment } from "@/app/lib/definitions";
 export const metadata: Metadata = {
-	title: "Logan Blank's Portfolio Page",
+	title: "Viewing Article | Logan Blank's Portfolio Page",
 };
 
 export default async function Home(props: {

@@ -1,115 +1,26 @@
-"use client";
-
-import { useRef, useEffect, useState, } from "react";
-import sensiLorem from "@/app/lib/sensiLorem";
+import { Metadata } from "next";
+import { WPMCalculator } from "./wpm-calculator";
+import Navbar from "@/app/ui/navbar";
+import Footer from "@/app/ui/footer";
+export const metadata: Metadata = {
+	title: "Typing Speed Calculator | Logan Blank's Portfolio Page",
+};
 
 export default function Page() {
 	return (
 		<>
-			<h1>Typing speed calculator</h1>
-			<WPMCalculator />
+			<div className="h-screen font-[450] not-italic bg-[#dddddd]">
+				<div className="w-full h-[90%]">
+					<Navbar>{<></>}</Navbar>
+					<div className="w-full h-full items-center justify-items-center mt-15">
+						<h1 className="text-2xl mb-2">
+							Typing speed calculator:
+						</h1>
+						<WPMCalculator />
+					</div>
+				</div>
+			</div>
+			<Footer />
 		</>
 	);
-}
-
-function WPMCalculator() {
-	const [prompt, setPrompt] = useState<string>(()=>
-		getPrompt("The quick brown fox jumps over the lazy dog."),
-	);
-	const [promptPercentage, setPromptPercentage] = useState<string>("0");
-	const [startTime, setStartTime] = useState<number | null>(null);
-	const [finishTime, setFinishTime] = useState<number | null>(null);
-	const [wpmTime, setWpmTime] = useState<string | null>(null);
-	const inputRef = useRef<null | HTMLInputElement>(null);
-
-	useEffect(() => {
-		inputRef.current?.focus();
-	}, [inputRef]);
-
-	function reset() {
-		setPrompt(getPrompt());
-		setStartTime(null);
-		setFinishTime(null);
-	}
-
-	function handleInput(input : HTMLInputElement) {
-		// Reset & start calculator
-		if (input.value.length == 0 && finishTime) {
-			reset();
-		} else if (input.value.length == 1) {
-			setStartTime(Date.now());
-		}
-
-		if (!finishTime) {
-			// Progress report
-			setWpmTime(useWPMCalc(startTime as number, Date.now(), input.value));
-			if (
-				input.value.length < prompt.length &&
-				prompt.includes(input.value)
-			) {
-				setPromptPercentage(
-					((input.value.length / prompt.length) * 100).toFixed(2),
-				);
-			}
-
-			// Complete test
-			if (input.value == prompt) {
-				setFinishTime(Date.now());
-			}
-		}
-	}
-
-	// Setup info text to display under the input element
-	let wpmText = "";
-	if (finishTime) {
-		wpmText = "WPM: " + wpmTime;
-	} else if (startTime) {
-		wpmText = "Calculating.. " + promptPercentage + "%";
-	} else {
-		wpmText = "Type to start.";
-	}
-	const wpmProgressText = wpmText.includes("Calculating")
-		? "(" + wpmTime + " WPM)"
-		: "";
-
-	return (
-		<>
-			<p className="font-lg">Prompt: {prompt}</p>
-			<input
-				ref={inputRef}
-				onInput={()=>{
-					handleInput(inputRef.current!);
-				}}
-				className="w-[700px] font-xl"
-			></input>
-			<h2>{wpmText}</h2>
-			<h3>{wpmProgressText}</h3>
-		</>
-	);
-}
-
-function getPrompt(basePrompt:string = "") {
-	let prompt;
-	if (basePrompt) {
-		// Set a specific prompt if basePrompt is set
-		prompt = basePrompt;
-	} else {
-		// Set the prompt to a string of random words
-		const wordCount = Math.floor(Math.random() * 2 + 8); //
-		prompt = sensiLorem(wordCount) + ".";
-	}
-	return prompt[0].toUpperCase() + prompt.slice(1);
-}
-
-function useWPMCalc(startTime: number, endTime: number, prompt: string) {
-	if (!startTime) {
-		return "0.00";
-	}
-
-	const timeDif: number = endTime - startTime;
-	const seconds: number = timeDif / 1000;
-	const minutes: number = seconds / 60;
-	const wpm: number = prompt.length / 5 / minutes;
-
-	return wpm.toFixed(2);
 }

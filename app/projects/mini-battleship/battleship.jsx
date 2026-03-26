@@ -1,4 +1,6 @@
 "use client";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
 	useEffect,
 	useState,
@@ -9,154 +11,19 @@ import {
 
 const debugMode = false;
 
-function placeRandomBoats(initialGameData) {
-	if (initialGameData.hasBeenSetup) {
-		return initialGameData;
-	} else {
-		let newGameData = initialGameData;
-		const disallowedCenters = [
-			[0, 0],
-			[3, 0],
-			[0, 3],
-			[3, 3],
-		];
-
-		for (let i = 0; i < 2; i++) {
-			// Define variables
-			let shipCenter = [0, 0];
-			let shipIsVertical = null;
-
-			// Determine where the center of each ship should go
-			let isValidCenter = false;
-			while (!isValidCenter) {
-				shipCenter = [
-					Math.floor(Math.random() * 4) + 0,
-					Math.floor(Math.random() * 4) + 0,
-				];
-
-				isValidCenter = true;
-				for (let j = 0; j < disallowedCenters.length; j++) {
-					if (
-						shipCenter[0] == disallowedCenters[j][0] &&
-						shipCenter[1] == disallowedCenters[j][1]
-					) {
-						isValidCenter = false;
-					}
-				}
-			}
-
-			// Determine if the ship should be vertical or horizontal
-			if (shipCenter[0] == 0 || shipCenter[0] == 3) {
-				shipIsVertical = false;
-			} else if (shipCenter[1] == 0 || shipCenter[1] == 3) {
-				shipIsVertical = true;
-			} else {
-				shipIsVertical = Math.floor(Math.random() * 2) == 1;
-			}
-
-			// Lengthen the ship so it is 3 squares long instead of 1
-			let shipTiles = [{}, {}, {}];
-			if (shipIsVertical) {
-				for (let j = 0; j < 3; j++) {
-					let row = shipCenter[0];
-					switch (j) {
-						case 0:
-							row--;
-							break;
-						case 2:
-							row++;
-							break;
-					}
-
-					shipTiles[j] = {
-						isPlayerBoard: i == 0,
-						rowId: row,
-						columnId: shipCenter[1],
-						status: 0,
-					};
-				}
-			} else {
-				for (let j = 0; j < 3; j++) {
-					let col = shipCenter[1];
-					switch (j) {
-						case 0:
-							col--;
-							break;
-						case 2:
-							col++;
-							break;
-					}
-
-					shipTiles[j] = {
-						isPlayerBoard: i == 0,
-						rowId: shipCenter[0],
-						columnId: col,
-						status: 0,
-					};
-				}
-			}
-
-			// Tell the game where the shipTiles are
-			newGameData.boxes = newGameData.boxes.map((b) => {
-				if (b.isPlayerBoard == (i == 0)) {
-					for (let i = 0; i < 3; i++) {
-						if (
-							b.isPlayerBoard == shipTiles[i].isPlayerBoard &&
-							b.rowId == shipTiles[i].rowId &&
-							b.columnId == shipTiles[i].columnId
-						) {
-							if (debugMode) {
-								console.log(
-									"b & shipTiles[" + i + "] ARE EQUAL!",
-								);
-								console.log(
-									"newGameData.boxes (b) - Row: " +
-										b.rowId +
-										". Column: " +
-										b.columnId +
-										". Status: " +
-										b.status +
-										". Board: " +
-										b.isPlayerBoard +
-										".",
-								);
-								console.log(
-									"newGameData.boxes (shipTiles[" +
-										i +
-										"]) - Row: " +
-										shipTiles[i].rowId +
-										". Column: " +
-										shipTiles[i].columnId +
-										". Status: " +
-										shipTiles[i].status +
-										". Board: " +
-										shipTiles[i].isPlayerBoard +
-										".",
-								);
-							}
-							b.status = 3;
-						}
-					}
-				}
-				return b;
-			});
-		}
-
-		newGameData.hasBeenSetup = true;
-		return newGameData;
-	}
-}
-
 export default function BattleshipPage() {
 	const [hasBeenSetup, setHasBeenSetup] = useState(false);
+
+	const dispatch = useGameDispatch();
 
 	useEffect(() => {
 		setHasBeenSetup(true);
 	}, []);
 
 	let content = hasBeenSetup && (
-		<BattleshipGame initialGameData={placeRandomBoats(baseGameData)}>
+		<BattleshipGame initialGameData={placeRandomBoats(getBaseGameData())}>
 			<Board isPlayerBoard={true} />
+			<ResetButton />
 			<Board isPlayerBoard={false} />
 		</BattleshipGame>
 	);
@@ -169,11 +36,29 @@ export default function BattleshipPage() {
 		</div>
 	);
 }
+
+function ResetButton() {
+	const dispatch = useGameDispatch();
+	return (
+		<button
+			onClick={() => {
+				dispatch({
+					type: "reset",
+					box: null,
+				});
+			}}
+			className="px-4 py-2 font-semibold text-white bg-[#949ba8] border-2 border-gray-500 rounded-lg shadow-md hover:bg-[#a4abb8] active:outline-none active:ring-2 active:ring-gray-500 active:ring-opacity-75 my-auto"
+		>
+			Reset Game
+		</button>
+	);
+}
+
 function BattleshipGame({ children, initialGameData }) {
 	const [gameData, dispatch] = useReducer(gameReducer, initialGameData);
 
 	return (
-		<div className="flex m-auto">
+		<div className="flex m-auto w-[90%]">
 			<GameContext value={gameData}>
 				<GameDispatchContext value={dispatch}>
 					{children}
@@ -459,6 +344,144 @@ function getNewBoxes(boxes, box) {
 	});
 }
 
+function placeRandomBoats(initialGameData) {
+	if (initialGameData.hasBeenSetup) {
+		return initialGameData;
+	} else {
+		let newGameData = initialGameData;
+		const disallowedCenters = [
+			[0, 0],
+			[3, 0],
+			[0, 3],
+			[3, 3],
+		];
+
+		for (let i = 0; i < 2; i++) {
+			// Define variables
+			let shipCenter = [0, 0];
+			let shipIsVertical = null;
+
+			// Determine where the center of each ship should go
+			let isValidCenter = false;
+			while (!isValidCenter) {
+				shipCenter = [
+					Math.floor(Math.random() * 4) + 0,
+					Math.floor(Math.random() * 4) + 0,
+				];
+
+				isValidCenter = true;
+				for (let j = 0; j < disallowedCenters.length; j++) {
+					if (
+						shipCenter[0] == disallowedCenters[j][0] &&
+						shipCenter[1] == disallowedCenters[j][1]
+					) {
+						isValidCenter = false;
+					}
+				}
+			}
+
+			// Determine if the ship should be vertical or horizontal
+			if (shipCenter[0] == 0 || shipCenter[0] == 3) {
+				shipIsVertical = false;
+			} else if (shipCenter[1] == 0 || shipCenter[1] == 3) {
+				shipIsVertical = true;
+			} else {
+				shipIsVertical = Math.floor(Math.random() * 2) == 1;
+			}
+
+			// Lengthen the ship so it is 3 squares long instead of 1
+			let shipTiles = [{}, {}, {}];
+			if (shipIsVertical) {
+				for (let j = 0; j < 3; j++) {
+					let row = shipCenter[0];
+					switch (j) {
+						case 0:
+							row--;
+							break;
+						case 2:
+							row++;
+							break;
+					}
+
+					shipTiles[j] = {
+						isPlayerBoard: i == 0,
+						rowId: row,
+						columnId: shipCenter[1],
+						status: 0,
+					};
+				}
+			} else {
+				for (let j = 0; j < 3; j++) {
+					let col = shipCenter[1];
+					switch (j) {
+						case 0:
+							col--;
+							break;
+						case 2:
+							col++;
+							break;
+					}
+
+					shipTiles[j] = {
+						isPlayerBoard: i == 0,
+						rowId: shipCenter[0],
+						columnId: col,
+						status: 0,
+					};
+				}
+			}
+
+			// Tell the game where the shipTiles are
+			newGameData.boxes = newGameData.boxes.map((b) => {
+				if (b.isPlayerBoard == (i == 0)) {
+					for (let i = 0; i < 3; i++) {
+						if (
+							b.isPlayerBoard == shipTiles[i].isPlayerBoard &&
+							b.rowId == shipTiles[i].rowId &&
+							b.columnId == shipTiles[i].columnId
+						) {
+							if (debugMode) {
+								console.log(
+									"b & shipTiles[" + i + "] ARE EQUAL!",
+								);
+								console.log(
+									"newGameData.boxes (b) - Row: " +
+										b.rowId +
+										". Column: " +
+										b.columnId +
+										". Status: " +
+										b.status +
+										". Board: " +
+										b.isPlayerBoard +
+										".",
+								);
+								console.log(
+									"newGameData.boxes (shipTiles[" +
+										i +
+										"]) - Row: " +
+										shipTiles[i].rowId +
+										". Column: " +
+										shipTiles[i].columnId +
+										". Status: " +
+										shipTiles[i].status +
+										". Board: " +
+										shipTiles[i].isPlayerBoard +
+										".",
+								);
+							}
+							b.status = 3;
+						}
+					}
+				}
+				return b;
+			});
+		}
+
+		newGameData.hasBeenSetup = true;
+		return newGameData;
+	}
+}
+
 const GameContext = createContext(null);
 const GameDispatchContext = createContext(null);
 
@@ -472,6 +495,10 @@ function useGameDispatch() {
 
 function gameReducer(game, action) {
 	let newGameData = game;
+	if (action.type == "reset") {
+		return placeRandomBoats(getBaseGameData());
+	}
+
 	if (action.type == "click") {
 		if (debugMode) {
 			console.log(
@@ -514,44 +541,46 @@ function gameReducer(game, action) {
 	}
 }
 
-const baseGameData = {
-	hasBeenSetup: false,
-	gameIsOver: false,
-	winner: null,
-	botHitBoxes: [],
-	boxes: [
-		{ isPlayerBoard: true, rowId: 0, columnId: 0, status: 0 },
-		{ isPlayerBoard: true, rowId: 0, columnId: 1, status: 0 },
-		{ isPlayerBoard: true, rowId: 0, columnId: 2, status: 0 },
-		{ isPlayerBoard: true, rowId: 0, columnId: 3, status: 0 },
-		{ isPlayerBoard: true, rowId: 1, columnId: 0, status: 0 },
-		{ isPlayerBoard: true, rowId: 1, columnId: 1, status: 0 },
-		{ isPlayerBoard: true, rowId: 1, columnId: 2, status: 0 },
-		{ isPlayerBoard: true, rowId: 1, columnId: 3, status: 0 },
-		{ isPlayerBoard: true, rowId: 2, columnId: 0, status: 0 },
-		{ isPlayerBoard: true, rowId: 2, columnId: 1, status: 0 },
-		{ isPlayerBoard: true, rowId: 2, columnId: 2, status: 0 },
-		{ isPlayerBoard: true, rowId: 2, columnId: 3, status: 0 },
-		{ isPlayerBoard: true, rowId: 3, columnId: 0, status: 0 },
-		{ isPlayerBoard: true, rowId: 3, columnId: 1, status: 0 },
-		{ isPlayerBoard: true, rowId: 3, columnId: 2, status: 0 },
-		{ isPlayerBoard: true, rowId: 3, columnId: 3, status: 0 },
+function getBaseGameData() {
+	return {
+		hasBeenSetup: false,
+		gameIsOver: false,
+		winner: null,
+		botHitBoxes: [],
+		boxes: [
+			{ isPlayerBoard: true, rowId: 0, columnId: 0, status: 0 },
+			{ isPlayerBoard: true, rowId: 0, columnId: 1, status: 0 },
+			{ isPlayerBoard: true, rowId: 0, columnId: 2, status: 0 },
+			{ isPlayerBoard: true, rowId: 0, columnId: 3, status: 0 },
+			{ isPlayerBoard: true, rowId: 1, columnId: 0, status: 0 },
+			{ isPlayerBoard: true, rowId: 1, columnId: 1, status: 0 },
+			{ isPlayerBoard: true, rowId: 1, columnId: 2, status: 0 },
+			{ isPlayerBoard: true, rowId: 1, columnId: 3, status: 0 },
+			{ isPlayerBoard: true, rowId: 2, columnId: 0, status: 0 },
+			{ isPlayerBoard: true, rowId: 2, columnId: 1, status: 0 },
+			{ isPlayerBoard: true, rowId: 2, columnId: 2, status: 0 },
+			{ isPlayerBoard: true, rowId: 2, columnId: 3, status: 0 },
+			{ isPlayerBoard: true, rowId: 3, columnId: 0, status: 0 },
+			{ isPlayerBoard: true, rowId: 3, columnId: 1, status: 0 },
+			{ isPlayerBoard: true, rowId: 3, columnId: 2, status: 0 },
+			{ isPlayerBoard: true, rowId: 3, columnId: 3, status: 0 },
 
-		{ isPlayerBoard: false, rowId: 0, columnId: 0, status: 0 },
-		{ isPlayerBoard: false, rowId: 0, columnId: 1, status: 0 },
-		{ isPlayerBoard: false, rowId: 0, columnId: 2, status: 0 },
-		{ isPlayerBoard: false, rowId: 0, columnId: 3, status: 0 },
-		{ isPlayerBoard: false, rowId: 1, columnId: 0, status: 0 },
-		{ isPlayerBoard: false, rowId: 1, columnId: 1, status: 0 },
-		{ isPlayerBoard: false, rowId: 1, columnId: 2, status: 0 },
-		{ isPlayerBoard: false, rowId: 1, columnId: 3, status: 0 },
-		{ isPlayerBoard: false, rowId: 2, columnId: 0, status: 0 },
-		{ isPlayerBoard: false, rowId: 2, columnId: 1, status: 0 },
-		{ isPlayerBoard: false, rowId: 2, columnId: 2, status: 0 },
-		{ isPlayerBoard: false, rowId: 2, columnId: 3, status: 0 },
-		{ isPlayerBoard: false, rowId: 3, columnId: 0, status: 0 },
-		{ isPlayerBoard: false, rowId: 3, columnId: 1, status: 0 },
-		{ isPlayerBoard: false, rowId: 3, columnId: 2, status: 0 },
-		{ isPlayerBoard: false, rowId: 3, columnId: 3, status: 0 },
-	],
-};
+			{ isPlayerBoard: false, rowId: 0, columnId: 0, status: 0 },
+			{ isPlayerBoard: false, rowId: 0, columnId: 1, status: 0 },
+			{ isPlayerBoard: false, rowId: 0, columnId: 2, status: 0 },
+			{ isPlayerBoard: false, rowId: 0, columnId: 3, status: 0 },
+			{ isPlayerBoard: false, rowId: 1, columnId: 0, status: 0 },
+			{ isPlayerBoard: false, rowId: 1, columnId: 1, status: 0 },
+			{ isPlayerBoard: false, rowId: 1, columnId: 2, status: 0 },
+			{ isPlayerBoard: false, rowId: 1, columnId: 3, status: 0 },
+			{ isPlayerBoard: false, rowId: 2, columnId: 0, status: 0 },
+			{ isPlayerBoard: false, rowId: 2, columnId: 1, status: 0 },
+			{ isPlayerBoard: false, rowId: 2, columnId: 2, status: 0 },
+			{ isPlayerBoard: false, rowId: 2, columnId: 3, status: 0 },
+			{ isPlayerBoard: false, rowId: 3, columnId: 0, status: 0 },
+			{ isPlayerBoard: false, rowId: 3, columnId: 1, status: 0 },
+			{ isPlayerBoard: false, rowId: 3, columnId: 2, status: 0 },
+			{ isPlayerBoard: false, rowId: 3, columnId: 3, status: 0 },
+		],
+	};
+}

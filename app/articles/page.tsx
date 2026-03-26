@@ -8,7 +8,7 @@ import Comment from "@/app/ui/articles/comments/comment";
 import { Suspense } from "react";
 import { ArticleComment } from "../lib/definitions";
 export const metadata: Metadata = {
-	title: "Logan Blank's Portfolio Page",
+	title: "Articles | Logan Blank's Portfolio Page",
 };
 
 export default async function Home() {
