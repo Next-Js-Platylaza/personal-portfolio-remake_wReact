@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState, } from "react";
-import sensiLorem from "sensible-lorem";
+import sensiLorem from "@/app/lib/sensiLorem";
 
 export default function Page() {
 	return (
@@ -13,8 +13,8 @@ export default function Page() {
 }
 
 function WPMCalculator() {
-	const [prompt, setPrompt] = useState<string>(
-		usePrompt("The quick brown fox jumps over the lazy dog."),
+	const [prompt, setPrompt] = useState<string>(()=>
+		getPrompt("The quick brown fox jumps over the lazy dog."),
 	);
 	const [promptPercentage, setPromptPercentage] = useState<string>("0");
 	const [startTime, setStartTime] = useState<number | null>(null);
@@ -27,7 +27,7 @@ function WPMCalculator() {
 	}, [inputRef]);
 
 	function reset() {
-		setPrompt(usePrompt());
+		setPrompt(getPrompt());
 		setStartTime(null);
 		setFinishTime(null);
 	}
@@ -88,7 +88,7 @@ function WPMCalculator() {
 	);
 }
 
-function usePrompt(basePrompt:string = "") {
+function getPrompt(basePrompt:string = "") {
 	let prompt;
 	if (basePrompt) {
 		// Set a specific prompt if basePrompt is set
