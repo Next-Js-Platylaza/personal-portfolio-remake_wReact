@@ -26,7 +26,7 @@ export default function WeatherComponent() {
 	}
 
 	return (
-		<div className="flex flex-col h-[52px] min-w-[80px] max-w-[190px] p-auto m-1 grow items-center justify-center text-center gap-2 rounded-md bg-gray-400 border-gray-600 text-slate-100 border-3 p-3 text-sm my-auto md:flex-none">
+		<div className="flex flex-col max-h-[65px] lg:h-[50px] min-w-[100px] max-w-[190px] p-auto m-1 grow items-center justify-center text-center gap-2 rounded-md bg-gray-400 border-gray-600 text-slate-100 border-3 p-3 text-sm my-auto lg:flex-none">
 			<p className="-mb-1.75 text-xs">{locationText}</p>
 			<p> {weatherText} </p>
 		</div>
