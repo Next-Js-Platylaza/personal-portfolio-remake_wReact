@@ -16,19 +16,19 @@ export default function ProjectComponent({ proj }: { proj: Project }) {
 				}
 				target={proj.link.includes("http") ? "_blank" : ""}
 				rel="noopener noreferrer"
-				className="flex flex-col items-center relative h-full w-full p-2 bg-gray-400 rounded-[13px]"
+				className="flex flex-col items-center relative h-full w-full p-2 bg-gray-300 rounded-[13px]"
 			>
     			<Image
     			    src={proj.img_src}
     			    alt="Project Background"
     			    fill
-    			    className="object-cover opacity-50 rounded-[13px]"
+    			    className="object-cover opacity-40 rounded-[13px]"
     			/>
      			<div className="absolute inset-0 z-10 p-2 flex flex-col items-center justify-center text-black">
-    			    <h4 className="text-[#0a0a0a] text-xl pt-2 mt-auto -mb-1">
+    			    <h4 className="text-[#0a0a0a] font-medium text-xl pt-2 mt-auto">
 						{proj.title}
 					</h4>
-					<p className="h-[100%] max-h-[100px] pt-2 m-auto text-center w-full">
+					<p className="h-[100%] max-h-[100px] pt-1 m-auto font-medium text-center w-full">
 						{proj.description}
 					</p>
       			</div>	
