@@ -1,6 +1,4 @@
 "use client";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
 	useEffect,
 	useState,
@@ -11,10 +9,8 @@ import {
 
 const debugMode = false;
 
-export default function BattleshipPage() {
+export default function BattleshipPage({footer}) {
 	const [hasBeenSetup, setHasBeenSetup] = useState(false);
-
-	const dispatch = useGameDispatch();
 
 	useEffect(() => {
 		setHasBeenSetup(true);
@@ -30,9 +26,10 @@ export default function BattleshipPage() {
 
 	return (
 		<div className="bg-[#735A2D] min-h-full h-auto h-full mb-[-140pt] mt-0 mx-auto m-auto">
-			<div className="h-[150pt] m-auto"></div>
+			<div className="h-[92pt] m-auto"></div>
 			{content}
-			<div className="h-[155pt] m-auto"></div>
+			<div className="h-[100pt] m-auto"></div>
+			{footer}
 		</div>
 	);
 }
@@ -79,6 +76,9 @@ function Board({ isPlayerBoard }) {
 		subtitleText += isPlayerBoard ? "Player" : "Computer";
 		subtitleText +=
 			isPlayerBoard == (game.winner == "Player") ? " Won!" : " Lost :(";
+	} else {
+		const {playerBoardHits, botBoardHits} = getBoardHitsCount(game);
+		subtitleText = (isPlayerBoard ? playerBoardHits : botBoardHits) + "/3 Ship Hits";
 	}
 	return (
 		<div className="m-auto">
@@ -89,7 +89,7 @@ function Board({ isPlayerBoard }) {
 			</div>
 			<div className="flex m-auto">
 				<h3 className="m-auto pt-[0pt] pb-[20pt] px-[0pt]">
-					{subtitleText}
+					{subtitleText == "" ? "|" : subtitleText}
 				</h3>
 			</div>
 			<div className="bg-[#eeeeee] border-[7px] border-solid border-[black] m-auto">
@@ -302,18 +302,7 @@ function getWinner(game) {
 		return game.winner;
 	}
 
-	let playerBoardHits = 0;
-	let botBoardHits = 0;
-
-	game.boxes.forEach((box) => {
-		if (box.status == 2) {
-			if (box.isPlayerBoard) {
-				playerBoardHits++;
-			} else {
-				botBoardHits++;
-			}
-		}
-	});
+	const {playerBoardHits, botBoardHits} = getBoardHitsCount(game);
 
 	if (playerBoardHits >= 3) {
 		console.log("Game Is Over! - Computer wins");
@@ -342,6 +331,29 @@ function getNewBoxes(boxes, box) {
 		}
 		return b;
 	});
+}
+
+function getBoardHitsCount(game)
+{
+	let playerBoardHits = 0;
+	let botBoardHits = 0;
+
+	console.log(game);
+
+	game.boxes.forEach((box) => {
+		if (box.status == 2) {
+			if (box.isPlayerBoard) {
+				playerBoardHits++;
+			} else {
+				botBoardHits++;
+			}
+		}
+	});
+
+	return {
+		playerBoardHits: playerBoardHits,
+		botBoardHits: botBoardHits,
+	}
 }
 
 function placeRandomBoats(initialGameData) {

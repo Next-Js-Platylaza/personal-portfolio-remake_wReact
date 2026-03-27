@@ -8,10 +8,10 @@ export const metadata: Metadata = {
 
 export default function Page() {
 	return (
-		<>
-			<div className="h-screen font-[450] not-italic bg-[#dddddd]">
-				<div className="w-full h-[90%]">
-					<Navbar>{<></>}</Navbar>
+		<div className="bg-[#dddddd] min-h-full h-auto h-full mb-[-140pt] mt-0 mx-auto m-auto">
+			<Navbar>{<></>}</Navbar>
+			<div className="h-[155pt] m-auto"/>
+			<div className="w-full h-[90%]">
 					<div className="w-full h-full items-center justify-items-center mt-15">
 						<h1 className="text-2xl mb-2">
 							Typing speed calculator:
@@ -19,8 +19,25 @@ export default function Page() {
 						<WPMCalculator />
 					</div>
 				</div>
-			</div>
+			<div className="h-[236pt] m-auto"/>
 			<Footer />
-		</>
+		</div>
 	);
 }
+
+/*
+		<div className="bg-[#dddddd] min-h-full h-auto h-full mb-[-140pt] mt-0 mx-auto m-auto">
+			<Navbar>{<></>}</Navbar>
+			<div className="h-[155pt] m-auto"/>
+			<div className="w-full h-[90%]">
+					<div className="w-full h-full items-center justify-items-center mt-15">
+						<h1 className="text-2xl mb-2">
+							Typing speed calculator:
+						</h1>
+						<WPMCalculator />
+					</div>
+				</div>
+			<div className="h-[236pt] m-auto"/>
+			<Footer />
+		</div>
+*/

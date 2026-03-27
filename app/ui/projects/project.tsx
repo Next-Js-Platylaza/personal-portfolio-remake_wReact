@@ -14,7 +14,7 @@ export default function ProjectComponent({ proj }: { proj: Project }) {
 						? `${proj.link}`
 						: `/projects/${proj.link}`
 				}
-				target="_blank"
+				target={proj.link.includes("http") ? "_blank" : ""}
 				rel="noopener noreferrer"
 				className="flex flex-col items-center relative h-full w-full p-2 bg-gray-400 rounded-[13px]"
 			>
