@@ -1,5 +1,4 @@
 "use server";
-import { Recipe } from "./definitions";
 import { getCurrentUserId, signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { z } from "zod";
@@ -9,7 +8,6 @@ import { redirect } from "next/navigation";
 import postgres from "postgres";
 import { v4 as uuidv4 } from "uuid";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
-import { error } from "console";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
@@ -51,6 +49,7 @@ async function hashPassword(plainTextPassword: string): Promise<string> {
 	}
 }
 
+//#region Account Creation
 const AccountFormSchema = z.object({
 	id: z.string(),
 	name: z
@@ -138,55 +137,119 @@ export async function createUser(
 	revalidatePath(url);
 	redirect(url);
 }
+//#endregion Account Creation Form
 
-const RecipeFormSchema = z.object({
-	id: z.uuid(),
-	title: z
-		.string({ error: "Please enter a title." })
-		.min(2, { error: "Title must contain 2 or more characters" })
-		.max(55, { error: "Title must be 55 characters or shorter" }),
-	image: z.httpUrl({ error: "Please enter a valid url." }).refine(
-		(url) => {
-			// Regular expression to check for common image file extensions
-			const imageExtensions = /\.(jpg|jpeg|png|gif|webp|svg)$/i;
-			return imageExtensions.test(url);
-		},
-		{
-			message:
-				"URL must point to a valid image file (jpg, jpeg, png, gif, webp, svg).",
-		},
-	),
-	ingredients: z.array(z.string({ error: "Please input a valid password." })),
-	steps: z.array(z.string({ error: "Please input a valid password." })),
-	date: z.string(),
+//#region Contact Me
+const ContactFormSchema = z.object({
+	first_name: z
+		.string({ error: "Please enter a first name." })
+		.min(1, { error: "First name must contain at least 1 character" })
+		.max(20, { error: "First name must be less than 21 characters" }),
+	last_name: z
+		.string({ error: "Please enter a last name." })
+		.min(1, { error: "Last name must contain at least 1 character" })
+		.max(20, { error: "Last name must be less than 21 characters" }),
+	email: z.email({ error: "Please input a valid email address." }),
+	message: z
+		.string({ error: "Please input a valid message." })
+		.min(5, { error: "Message must contain more than 4 characters" })
+		.max(300, { error: "Message must be less than 301 characters" }),
+	message_type: z.enum(["business", "feedback", "general"]),
 });
 
-const CreateRecipe = RecipeFormSchema.omit({ id: true });
-const UpdateRecipe = RecipeFormSchema.omit({});
+const SendContactForm = ContactFormSchema.omit({});
 
-export type RecipeFormState = {
+export type ContactFormState = {
 	fields: FormData;
 	errors?: {
-		title?: string[];
-		image?: string[];
-		ingredients?: string[];
-		steps?: string[];
+		first_name?: string[];
+		last_name?: string[];
+		email?: string[];
+		message?: string[];
+		message_type?: string[];
+	};
+	message?: string | null;
+	wasSubmited: boolean;
+};
+
+export async function sendContactForm(
+	prevState: ContactFormState,
+	formData: FormData,
+) {
+	// Validate form using Zod
+	const validatedFields = SendContactForm.safeParse({
+		first_name: formData.get("first-name"),
+		last_name: formData.get("last-name"),
+		email: formData.get("email"),
+		message: formData.get("message"),
+		message_type: formData.get("message-type"),
+	});
+
+	// If form validation fails, return errors early. Otherwise, continue.
+	if (!validatedFields.success) {
+		return {
+			fields: formData,
+			errors: validatedFields.error.flatten().fieldErrors,
+			message: "Missing Fields. Failed to send message.",
+			wasSubmited: false,
+		};
+	}
+
+	const { first_name, last_name, email, message, message_type } =
+		validatedFields.data;
+
+	try {
+		await sql`
+		INSERT INTO contact (first_name, last_name, email, message, message_type)
+		VALUES (${first_name}, ${last_name}, ${email}, ${message}, ${message_type}::contact_message_type)`;
+	} catch (error) {
+		return {
+			fields: formData,
+			message: "Something went wrong, please try again. | " + error + " | SQL :"+`
+		INSERT INTO contact (first_name, last_name, email, message, message_type)
+		VALUES (${first_name}, ${last_name}, ${email}, ${message}, ${message_type}::contact_message_type)`,
+			wasSubmited: false,
+		};
+	}
+
+	return {
+			fields: formData,
+			message: "Successfully sent your message!",
+			wasSubmited: true,
+	};
+}
+//#endregion Contact Form
+
+//#region Comments
+const CommentFormSchema = z.object({
+	comment_id: z.string(),
+	article_id: z.string(),
+	text: z
+		.string({ error: "Please input text." })
+		.min(1, { error: "Comment must contain 1 or more characters" })
+		.max(100, { error: "Comment must be less than 101 characters" })
+});
+
+export type CommentFormState = {
+	fields: FormData;
+	errors?: {
+		article_id?: string[],
+		text?: string[],
 	};
 	message?: string | null;
 };
 
-export async function createRecipe(
-	prevState: RecipeFormState | undefined,
+	//#region Comment Creation
+const CreateComment = CommentFormSchema.omit({ comment_id:true });
+
+export async function createComment(
+	prevState: CommentFormState,
 	formData: FormData,
 ) {
 	// Validate form using Zod
-	const validatedFields = CreateRecipe.safeParse({
-		id: formData.get("id"),
-		title: formData.get("title"),
-		image: formData.get("image"),
-		ingredients: formData.getAll("ingredients"),
-		steps: formData.getAll("steps"),
-		date: formData.get("date"),
+	const validatedFields = CreateComment.safeParse({
+		article_id: formData.get("article-id"),
+		text: formData.get("text"),
 	});
 
 	// If form validation fails, return errors early. Otherwise, continue.
@@ -194,53 +257,49 @@ export async function createRecipe(
 		return {
 			fields: formData,
 			errors: validatedFields.error.flatten().fieldErrors,
-			message: "Missing fields. Failed to create recipe.",
+			message: "DisplayError",
 		};
 	}
 
 	// Prepare data for insertion into the database
-	const uuid = uuidv4();
-	const user_id = (await getCurrentUserId()) ?? "Failed To Get UserID.";
+	const { article_id, text } = validatedFields.data;
+	const user_id = await getCurrentUserId() as string;
 
-	const { title, image, ingredients, steps, date } = validatedFields.data;
-	// Insert data into the database
 	try {
 		await sql`
-			INSERT INTO recipes (id, title, image, ingredients, steps, user_id, date, edit_date)
-			VALUES (${uuid}, ${title}, ${image}, ${ingredients}, ${steps}, ${user_id}, ${date}, ${date})
-		  `;
+		INSERT INTO comments (article_id, user_id, text)
+		VALUES (${article_id}, ${user_id}, ${text})`;
 	} catch (error) {
-		// If a database error occurs, return a more specific error.
 		return {
 			fields: formData,
-			message:
-				"Database Error: Failed to create recipe. | Error: " + error,
+			message: "Something went wrong, please try again. | " + error,
 		};
 	}
 
-	/*return { // Added for fixing timezone issues
+	const url: string = (formData.get("redirectTo") as string) ?? `/articles/${article_id}`;
+	// Revalidate the cache and refresh page.
+	revalidatePath(url);
+
+	formData.set("text", "");
+	return {
 		fields: formData,
-		message: "Remove this you silly goose. | Date: " + date,
-	};*/
-
-	// Revalidate the cache for the recipes page and redirect the user.
-	revalidatePath(`/recipes/${uuid}/view`);
-	redirect(`/recipes/${uuid}/view`);
+		message: "Succesfully commented on article.",
+	};
 }
+//#endregion Comment Creation
 
-export async function editRecipe(
-	prevState: RecipeFormState | undefined,
+	//#region Comment Editing
+const EditComment = CommentFormSchema.omit({});
+
+export async function editComment(
+	prevState: CommentFormState,
 	formData: FormData,
 ) {
 	// Validate form using Zod
-	const validatedFields = UpdateRecipe.safeParse({
-		id: formData.get("id"),
-		title: formData.get("title"),
-		image: formData.get("image"),
-		ingredients: formData.getAll("ingredients"),
-		steps: formData.getAll("steps"),
-		user_id: formData.get("user_id"),
-		date: formData.get("date"),
+	const validatedFields = EditComment.safeParse({
+		comment_id: formData.get("comment-id"),
+		article_id: formData.get("article-id"),
+		text: formData.get("text"),
 	});
 
 	// If form validation fails, return errors early. Otherwise, continue.
@@ -248,56 +307,84 @@ export async function editRecipe(
 		return {
 			fields: formData,
 			errors: validatedFields.error.flatten().fieldErrors,
-			message: "Missing Fields. Failed to update recipe.",
+			message: "DisplayError",
 		};
 	}
 
 	// Prepare data for insertion into the database
+	const { comment_id, article_id, text } = validatedFields.data;
+	const user_id = await getCurrentUserId() as string;
 
-	const { id, title, image, ingredients, steps, date } = validatedFields.data;
-	// Insert data into the database
 	try {
 		await sql`
-			UPDATE recipes 
-			SET title = ${title}, image = ${image}, ingredients = ${ingredients}, steps = ${steps}, edit_date = ${date}
-			WHERE id = ${id};
-		  `;
+		UPDATE comments SET text = ${text}
+		WHERE id = ${comment_id} AND article_id = ${article_id} AND user_id = ${user_id}`;
 	} catch (error) {
-		// If a database error occurs, return a more specific error.
 		return {
 			fields: formData,
-			message: "Database Error: Failed to update recipe.",
+			message: "Something went wrong, please try again. | " + error,
 		};
 	}
 
-	// Revalidate the cache for the recipes page and redirect the user.
-	revalidatePath(`/recipes/${id}/view`);
-	redirect(`/recipes/${id}/view`);
-}
+	const url: string = (formData.get("redirectTo") as string) ?? `/articles/${article_id}`;
+	// Revalidate the cache and refresh page.
+	revalidatePath(url);
 
-export async function deleteRecipe(
-	prevState: { message: string; error: string } | undefined,
+	formData.set("sent", "true");
+	return {
+		fields: formData,
+		message: "Succesfully edited comment.",
+	};
+}
+//#endregion Comment Editing
+
+	//#region Comment Deleting
+const DeleteComment = CommentFormSchema.omit({});
+
+export async function deleteComment(
+	prevState: CommentFormState,
 	formData: FormData,
 ) {
-	const id = (formData.get("id") as string) ?? "Failed To Get Recipe ID";
+	// Validate form using Zod
+	const validatedFields = DeleteComment.safeParse({
+		text: "deleting",
+		comment_id: formData.get("comment-id"),
+		article_id: formData.get("article-id"),
+	});
+
+	// If form validation fails, return errors early. Otherwise, continue.
+	if (!validatedFields.success) {
+		return {
+			fields: formData,
+			errors: validatedFields.error.flatten().fieldErrors,
+			message: "DisplayError",
+		};
+	}
+
+	// Prepare data for insertion into the database
+	const { comment_id, article_id } = validatedFields.data;
+	const user_id = await getCurrentUserId() as string;
 
 	try {
 		await sql`
-            DELETE
-            FROM recipes
-			WHERE id = ${id}
-			AND user_id = ${(await getCurrentUserId()) ?? "Failed To Get UserID"}
-        `;
-
+		DELETE FROM comments
+		WHERE id = ${comment_id} AND user_id = ${user_id}`;
+	} catch (error) {
 		return {
-			message: "Successfully deleted recipe!",
-			error: "",
-		};
-	} catch (err) {
-		console.error("Database Error:", err);
-		return {
-			message: "",
-			error: "Failed to delete user's recipe. | Error: " + err,
+			fields: formData,
+			message: "Something went wrong, please try again. | " + error,
 		};
 	}
+
+	const url: string = (formData.get("redirectTo") as string) ?? `/articles/${article_id}`;
+	// Revalidate the cache and refresh page.
+	revalidatePath(url);
+
+	return {
+		fields: formData,
+		message: "Succesfully deleted comment.",
+	};
 }
+//#endregion Comment Deleting
+
+//#endregion Comments

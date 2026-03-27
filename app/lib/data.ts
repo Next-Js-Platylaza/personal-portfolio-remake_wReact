@@ -1,5 +1,5 @@
-import postgres, { RowList } from "postgres";
-import { User, Recipe } from "./definitions";
+import postgres from "postgres";
+import { Article, User, ArticleComment, Project } from "@/app/lib/definitions";
 import { getCurrentUserId } from "@/auth";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
@@ -53,55 +53,90 @@ export async function fetchUsers() {
 	}
 }
 
-export async function fetchRecipeById(id: string) {
+export async function fetchArticleById(id: string) {
 	try {
-		const recipes = await sql<Recipe[]>`
-            SELECT
-            *
-            FROM recipes
-			WHERE id = ${id}
-            ORDER BY title ASC
-        `;
-
-		return recipes[0];
-	} catch (err) {
-		console.error("Database Error:", err);
-		throw new Error("Failed to fetch user's recipes.");
-	}
-}
-export async function fetchRecipesByUser(userId: string) {
-	try {
-		const recipes = await sql<Recipe[]>`
-            SELECT
-            *
-            FROM recipes
-			WHERE user_id = ${userId}
-            ORDER BY title ASC
-        `;
-
-		return recipes;
-	} catch (err) {
-		console.error("Database Error:", err);
-		throw new Error("Failed to fetch user's recipes.");
-	}
-}
-
-export async function fetchRecipesPages(query: string, itemsPerPage: number) {
-	const userId = (await getCurrentUserId()) ?? "Failed To Fetch UserID";
-	try {
-		const recipes = await sql<Recipe[]>`
-			SELECT *
-    		FROM recipes
-    		WHERE
-      			(title ILIKE ${`%${query}%`} OR
-      			date::text ILIKE ${`%${query}%`})
-	  			AND user_id = ${userId}
-			ORDER BY edit_date DESC;
+		const article = await sql<Article[]>`
+			SELECT * FROM articles WHERE id = ${id}
   		`;
 
-		return recipes;
+		return article[0];
 	} catch (error) {
 		console.error("Database Error:", error);
-		throw new Error("Failed to fetch recipes from search.");
+		throw new Error(`Failed to fetch article ${id}.`);
+	}
+}
+export async function fetchArticleBySlug(slug: string) {
+	try {
+		const article = await sql<Article[]>`
+			SELECT * FROM articles WHERE url_slug = ${slug}
+  		`;
+
+		return article[0];
+	} catch (error) {
+		console.error("Database Error:", error);
+		throw new Error(`Failed to fetch article ${slug}.`);
+	}
+}
+
+export async function fetchArticles() {
+	try {
+		const articles = await sql<Article[]>`
+			SELECT * FROM articles
+  		`;
+
+		return articles;
+	} catch (error) {
+		console.error("Database Error:", error);
+		throw new Error("Failed to fetch articles.");
+	}
+}
+
+export async function fetchCommentsByArticle(id: string | number) {
+	try {
+		const comments = await sql<ArticleComment[]>`
+			SELECT * FROM comments WHERE article_id = ${id}
+  		`;
+
+		return comments;
+	} catch (error) {
+		console.error("Database Error:", error);
+		throw new Error("Failed to fetch comments.");
+	}
+}
+export async function fetchComment(id: string | number) {
+	try {
+		const comment = await sql<ArticleComment[]>`
+			SELECT * FROM comments WHERE id = ${id}
+  		`;
+
+		return comment[0];
+	} catch (error) {
+		console.error("Database Error:", error);
+		throw new Error("Failed to fetch comments.");
+	}
+}
+
+export async function fetchProject(link: string) {
+	try {
+		const projects = await sql<Project[]>`
+			SELECT id, title, link, description, img_src FROM projects WHERE link = ${link}
+  		`;
+		return projects[0];
+	} catch (error) {
+		console.error("Database Error:", error);
+		throw new Error(`Failed to fetch project ${link}.`);
+	}
+}
+export async function fetchProjects() {
+	try {
+		const projects = await sql<Project[]>`
+			SELECT id, title, link, description, img_src FROM projects
+  		`;
+		return projects.sort(
+			(a: Project, b: Project) => Number(a.id) - Number(b.id),
+		);
+	} catch (error) {
+		console.error("Database Error:", error);
+		throw new Error("Failed to fetch projects.");
 	}
 }

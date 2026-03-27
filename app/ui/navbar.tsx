@@ -1,6 +1,10 @@
 import { signOut, getCurrentUserName } from "@/auth";
 import NavLinks from "@/app/ui/nav-links";
 import Link from "next/link";
+import SignInButton from "./sign-in-button";
+import WeatherComponent from "./weather";
+import { Suspense } from "react";
+import { CrossPageData } from "../lib/api";
 
 export default async function Navbar({
 	children,
@@ -9,30 +13,38 @@ export default async function Navbar({
 }) {
 	const userName = await getCurrentUserName();
 	const signInSignOutClass =
-		"flex ml-[5px] my-auto h-[60px] min-w-[100px] w-auto grow items-center justify-center rounded-md bg-gray-50 border-gray-200 border-2 p-3 text-sm font-medium hover:bg-sky-100 hover:border-sky-200 hover:text-blue-600 md:flex-none md:p-2 md:px-3 md:ml-auto";
+		"flex ml-[5px] my-auto h-[60px] min-w-[100px] w-auto grow items-center justify-center rounded-md bg-gray-400 border-gray-600 border-2 text-slate-100 p-3 text-sm font-medium active:text-gray-600 active:border-3 active:ring-1 active:font-bold active:ring-gray-400 hover:bg-slate-300 hover:border-gray-400 hover:text-gray-700 md:flex-none md:p-2 md:px-3";
 
 	return (
-		<div className="flex w-full bg-gray-300 border-2 border-gray-400 p-2">
+		<div className="flex w-full bg-[#bbbec3] border-2 border-[#878b92] p-2">
 			<NavLinks />
 			{children}
-			{userName != null ? (
-				<button
-					className={signInSignOutClass}
-					onClick={async () => {
-						"use server";
-						await signOut({ redirectTo: "/" });
-					}}
-				>
-					<div>
-						Sign Out
-						<p className="m-[-1pt] text-xs whitespace-nowrap">{`(${userName})`}</p>
-					</div>
-				</button>
-			) : (
-				<Link href="account/login" className={signInSignOutClass}>
-					<div>Sign In</div>
+			<div className={`flex gap-2 max-md:gap-0 max-lg:gap-1 md:ml-auto`}>
+				<Suspense>
+					<WeatherComponent />
+				</Suspense>
+			</div>
+			<div className={`flex gap-2 max-md:gap-0 max-lg:gap-1 md:ml-auto`}>
+				<Link href="/#contact" className={signInSignOutClass}>
+					<div>Contact Me</div>
 				</Link>
-			)}
+				{userName != null ? (
+					<button
+						className={signInSignOutClass}
+						onClick={async () => {
+							"use server";
+							await signOut({});
+						}}
+					>
+						<div>
+							Sign Out
+							<p className="m-[-1pt] text-xs whitespace-nowrap">{`(${userName})`}</p>
+						</div>
+					</button>
+				) : (
+					<SignInButton classes={signInSignOutClass} />
+				)}
+			</div>
 		</div>
 	);
 }

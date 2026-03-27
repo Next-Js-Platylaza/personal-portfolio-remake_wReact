@@ -4,20 +4,31 @@ export type User = {
 	email: string;
 	password: string;
 };
-export type Recipe = {
+
+export type Article = {
 	id: string;
 	title: string;
-	image: string;
-	ingredients: string[];
-	steps: string[];
+	text: string;
+	url_slug: string;
+};
+export type ArticleComment = {
+	id: string;
+	article_id: string;
 	user_id: string;
-	date: Date;
-	edit_date: Date;
+	text: string;
 };
 
 export type LinkStructure = {
 	name?: string;
 	href: string;
+};
+
+export type Project = {
+	id: string;
+	title: string;
+	link: string;
+	description: string;
+	img_src: string;
 };
 
 export type InputAttributes = {
@@ -33,4 +44,20 @@ export type InputAttributes = {
 	inputDivStyles?: string;
 	inputStyles?: string;
 	removeButtonStyles?: string;
+};
+
+export type WeatherData = {
+	temp: string;
+	word: string;
+};
+
+export type LocationCoords = {
+	latitude: number | null;
+	longitude: number | null;
+};
+
+export type LocationState = {
+	loading: boolean;
+	coords: LocationCoords | null;
+	error: string | null;
 };

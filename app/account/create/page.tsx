@@ -3,9 +3,8 @@ import { Suspense } from "react";
 
 import { Metadata } from "next";
 export const metadata: Metadata = {
-	title: "Create Account",
+	title: "Create Account | Logan Blank's Portfolio Page",
 };
-
 
 export default function Page() {
 	return (
